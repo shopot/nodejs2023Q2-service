@@ -2,7 +2,7 @@ import { Exclude } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class User {
-  @ApiProperty()
+  @ApiProperty({ type: 'uuid v4' })
   id: string;
 
   @ApiProperty()

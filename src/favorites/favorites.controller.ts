@@ -9,6 +9,7 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
+import { ApiTags } from '@nestjs/swagger';
 
 import { FavoritesService } from './favorites.service';
 import { UuidDto } from '../common/dto';
@@ -23,6 +24,7 @@ import {
 } from '../common/exceptions';
 
 @Controller('favs')
+@ApiTags('favs')
 @UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
 export class FavoritesController {

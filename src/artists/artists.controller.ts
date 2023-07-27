@@ -11,6 +11,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
+import { ApiTags } from '@nestjs/swagger';
 
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -25,6 +26,7 @@ import { HttpExceptionFilter } from '../common/filters';
 import { TransformInterceptor } from '../common/interceptors';
 
 @Controller('artist')
+@ApiTags('artist')
 @UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
 export class ArtistsController {

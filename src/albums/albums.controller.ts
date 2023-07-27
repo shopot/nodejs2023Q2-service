@@ -10,6 +10,7 @@ import {
   UseFilters,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -24,6 +25,7 @@ import {
 } from '../common/exceptions';
 
 @Controller('album')
+@ApiTags('album')
 @UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
 export class AlbumsController {

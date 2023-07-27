@@ -11,6 +11,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
+import { ApiTags } from '@nestjs/swagger';
 
 import { TracksService } from './tracks.service';
 import { CreateTrackDto } from './dto/create-track.dto';
@@ -25,6 +26,7 @@ import {
 } from '../common/exceptions';
 
 @Controller('track')
+@ApiTags('track')
 @UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
 export class TracksController {

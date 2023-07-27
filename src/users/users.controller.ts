@@ -11,6 +11,16 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -28,22 +38,48 @@ import { HttpExceptionFilter } from '../common/filters';
 import { TransformInterceptor } from '../common/interceptors';
 
 @Controller('user')
+@ApiTags('user')
 @UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Post()
+  @ApiBody({
+    type: CreateUserDto,
+    description: 'A login and password for the new user',
+  })
+  @ApiCreatedResponse({
+    description: 'The user has been successfully created.',
+    type: User,
+  })
   create(@Body() createUserDto: CreateUserDto): User {
     return this.userService.create(createUserDto);
   }
 
   @Get()
+  @ApiOkResponse({
+    description: 'A users has been successfully fetched',
+    type: [User],
+  })
   findAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a user that exists in the database',
+    type: 'uuid v4',
+  })
+  @ApiOkResponse({
+    description: 'A user has been successfully fetched',
+    type: User,
+  })
+  @ApiNotFoundResponse({
+    description: 'A user with given id does not exist.',
+  })
   findOne(@Param() { id }: UuidDto) {
     try {
       return this.userService.findOne(id);
@@ -57,6 +93,18 @@ export class UsersController {
   }
 
   @Put(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a user that exists in the database',
+    type: 'uuid v4',
+  })
+  @ApiBody({ type: UpdateUserDto, description: 'A new password for the user' })
+  @ApiOkResponse({
+    description: 'A user has been successfully updated',
+    type: User,
+  })
+  @ApiNotFoundResponse({ description: 'A user with given id does not exist.' })
   update(@Param() { id }: UuidDto, @Body() updateUserDto: UpdateUserDto) {
     try {
       return this.userService.update(id, updateUserDto);
@@ -72,6 +120,15 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @Put(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a user that exists in the database',
+    type: 'uuid v4',
+  })
+  @ApiNoContentResponse({ description: 'A user has been successfully deleted' })
+  @ApiNotFoundResponse({ description: 'A user with given id does not exist.' })
   @HttpCode(StatusCodes.NO_CONTENT)
   remove(@Param() { id }: UuidDto) {
     try {

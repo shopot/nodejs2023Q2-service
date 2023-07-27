@@ -3,17 +3,16 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { BaseRepository } from '../common/database/base-repository';
 import { User } from './entities/user.entity';
-import { NotFoundException, ForbiddenException } from '../common/exceptions';
+import {
+  NotFoundErrorException,
+  AuthErrorException,
+} from '../common/exceptions';
+import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class UserService {
-  private userDb: BaseRepository<User>;
-
-  constructor() {
-    this.userDb = new BaseRepository<User>();
-  }
+  constructor(private databaseService: DatabaseService) {}
 
   create({ login, password }: CreateUserDto): User {
     const user = new User({
@@ -25,34 +24,34 @@ export class UserService {
       updatedAt: Date.now(),
     });
 
-    return this.userDb.create(user);
+    return this.databaseService.users.create(user);
   }
 
   findAll() {
-    return this.userDb.find();
+    return this.databaseService.users.find();
   }
 
   findOne(id: string) {
-    const foundUser = this.userDb.findOneBy({ id });
+    const foundUser = this.databaseService.users.findOneBy({ id });
 
     if (foundUser === null) {
-      throw new NotFoundException();
+      throw new NotFoundErrorException(`User not found with id: ${id}`);
     }
 
     return foundUser;
   }
 
   update(id: string, { oldPassword, newPassword }: UpdateUserDto) {
-    const foundUser = this.userDb.findOneBy({ id });
+    const foundUser = this.databaseService.users.findOneBy({ id });
 
     if (foundUser === null) {
-      throw new NotFoundException();
+      throw new NotFoundErrorException();
     }
 
     const { password: currentPassword } = foundUser;
 
     if (currentPassword !== oldPassword) {
-      throw new ForbiddenException();
+      throw new AuthErrorException();
     }
 
     const updatedUser = new User({
@@ -62,14 +61,14 @@ export class UserService {
       version: foundUser.version + 1,
     });
 
-    return this.userDb.update(id, updatedUser);
+    return this.databaseService.users.update(id, updatedUser);
   }
 
   remove(id: string) {
-    if (!this.userDb.has(id)) {
-      throw new NotFoundException();
+    if (!this.databaseService.users.has(id)) {
+      throw new NotFoundErrorException();
     }
 
-    return this.userDb.remove({ id });
+    return this.databaseService.users.remove({ id });
   }
 }

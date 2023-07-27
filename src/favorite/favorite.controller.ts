@@ -6,7 +6,10 @@ import {
   Delete,
   UseFilters,
   UseInterceptors,
+  HttpCode,
 } from '@nestjs/common';
+import { StatusCodes } from 'http-status-codes';
+
 import { FavoriteService } from './favorite.service';
 import { UuidDto } from '../common/dto';
 import { HttpExceptionFilter } from '../common/filters';
@@ -14,7 +17,9 @@ import { TransformInterceptor } from '../common/interceptors';
 import {
   HttpNotFoundException,
   HttpServerErrorException,
+  HttpUnprocessableException,
   NotFoundErrorException,
+  UnprocessableErrorException,
 } from '../common/exceptions';
 
 @Controller('favs')
@@ -34,7 +39,15 @@ export class FavoriteController {
    */
   @Post('/track/:id')
   createTrack(@Param() { id }: UuidDto) {
-    return this.favoriteService.createTrack(id);
+    try {
+      return this.favoriteService.createTrack(id);
+    } catch (err) {
+      if (err instanceof UnprocessableErrorException) {
+        throw new HttpUnprocessableException();
+      }
+
+      throw new HttpServerErrorException();
+    }
   }
 
   /**
@@ -42,6 +55,7 @@ export class FavoriteController {
    * @param UuidDto
    */
   @Delete('/track/:id')
+  @HttpCode(StatusCodes.NO_CONTENT)
   removeTrack(@Param() { id }: UuidDto) {
     try {
       return this.favoriteService.removeTrack(id);
@@ -60,7 +74,15 @@ export class FavoriteController {
    */
   @Post('/album/:id')
   createAlbum(@Param() { id }: UuidDto) {
-    return this.favoriteService.createAlbum(id);
+    try {
+      return this.favoriteService.createAlbum(id);
+    } catch (err) {
+      if (err instanceof UnprocessableErrorException) {
+        throw new HttpUnprocessableException();
+      }
+
+      throw new HttpServerErrorException();
+    }
   }
 
   /**
@@ -68,6 +90,7 @@ export class FavoriteController {
    * @param UuidDto
    */
   @Delete('/album/:id')
+  @HttpCode(StatusCodes.NO_CONTENT)
   removeAlbum(@Param() { id }: UuidDto) {
     try {
       return this.favoriteService.removeAlbum(id);
@@ -86,7 +109,15 @@ export class FavoriteController {
    */
   @Post('/artist/:id')
   createArtist(@Param() { id }: UuidDto) {
-    return this.favoriteService.createArtist(id);
+    try {
+      return this.favoriteService.createArtist(id);
+    } catch (err) {
+      if (err instanceof UnprocessableErrorException) {
+        throw new HttpUnprocessableException();
+      }
+
+      throw new HttpServerErrorException();
+    }
   }
 
   /**
@@ -94,6 +125,7 @@ export class FavoriteController {
    * @param UuidDto
    */
   @Delete('/artist/:id')
+  @HttpCode(StatusCodes.NO_CONTENT)
   removeArtist(@Param() { id }: UuidDto) {
     try {
       return this.favoriteService.removeArtist(id);

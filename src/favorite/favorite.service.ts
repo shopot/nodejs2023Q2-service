@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
-import { NotFoundErrorException } from '../common/exceptions';
+import {
+  NotFoundErrorException,
+  UnprocessableErrorException,
+} from '../common/exceptions';
 
 @Injectable()
 export class FavoriteService {
@@ -15,10 +18,20 @@ export class FavoriteService {
   }
 
   createTrack(id: string) {
-    this.databaseService.favorites.tracks.add(id);
+    const foundTrack = this.databaseService.tracks.findOneBy({ id });
+
+    if (foundTrack === null) {
+      throw new UnprocessableErrorException();
+    }
+
+    this.databaseService.favorites.tracks.set(id, foundTrack);
   }
 
   removeTrack(id: string) {
+    if (!this.databaseService.tracks.has(id)) {
+      throw new NotFoundErrorException();
+    }
+
     if (!this.databaseService.favorites.tracks.has(id)) {
       throw new NotFoundErrorException();
     }
@@ -29,10 +42,20 @@ export class FavoriteService {
   }
 
   createAlbum(id: string) {
-    this.databaseService.favorites.albums.add(id);
+    const foundAlbum = this.databaseService.albums.findOneBy({ id });
+
+    if (foundAlbum === null) {
+      throw new UnprocessableErrorException();
+    }
+
+    this.databaseService.favorites.albums.set(id, foundAlbum);
   }
 
   removeAlbum(id: string) {
+    if (!this.databaseService.albums.has(id)) {
+      throw new NotFoundErrorException();
+    }
+
     if (!this.databaseService.favorites.albums.has(id)) {
       throw new NotFoundErrorException();
     }
@@ -43,10 +66,20 @@ export class FavoriteService {
   }
 
   createArtist(id: string) {
-    this.databaseService.favorites.artists.add(id);
+    const foundArtist = this.databaseService.artists.findOneBy({ id });
+
+    if (foundArtist === null) {
+      throw new UnprocessableErrorException();
+    }
+
+    this.databaseService.favorites.artists.set(id, foundArtist);
   }
 
   removeArtist(id: string) {
+    if (!this.databaseService.artists.has(id)) {
+      throw new NotFoundErrorException();
+    }
+
     if (!this.databaseService.favorites.artists.has(id)) {
       throw new NotFoundErrorException();
     }

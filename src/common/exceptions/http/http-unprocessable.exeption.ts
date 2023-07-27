@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-export class UnprocessableContentException extends HttpException {
+export class HttpUnprocessableException extends HttpException {
   constructor() {
     super('Not found', HttpStatus.UNPROCESSABLE_ENTITY);
   }

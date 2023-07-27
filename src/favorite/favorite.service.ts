@@ -1,27 +1,58 @@
 import { Injectable } from '@nestjs/common';
-import { Favorite } from './entities/favorite.entity';
+import { DatabaseService } from '../database/database.service';
+import { NotFoundErrorException } from '../common/exceptions';
 
 @Injectable()
 export class FavoriteService {
-  private favoriteDb: Favorite;
-
-  constructor() {
-    this.favoriteDb = new Favorite();
-  }
+  constructor(private readonly databaseService: DatabaseService) {}
 
   findAll() {
-    return `This action returns all favorite`;
+    return {
+      artists: Array.from(this.databaseService.favorites.artists.values()),
+      albums: Array.from(this.databaseService.favorites.albums.values()),
+      tracks: Array.from(this.databaseService.favorites.tracks.values()),
+    };
   }
 
-  createTrack(id: string) {}
+  createTrack(id: string) {
+    this.databaseService.favorites.tracks.add(id);
+  }
 
-  removeTrack(id: string) {}
+  removeTrack(id: string) {
+    if (!this.databaseService.favorites.tracks.has(id)) {
+      throw new NotFoundErrorException();
+    }
 
-  createAlbum(id: string) {}
+    this.databaseService.favorites.tracks.delete(id);
 
-  removeAlbum(id: string) {}
+    return id;
+  }
 
-  createArtist(id: string) {}
+  createAlbum(id: string) {
+    this.databaseService.favorites.albums.add(id);
+  }
 
-  removeArtist(id: string) {}
+  removeAlbum(id: string) {
+    if (!this.databaseService.favorites.albums.has(id)) {
+      throw new NotFoundErrorException();
+    }
+
+    this.databaseService.favorites.albums.delete(id);
+
+    return id;
+  }
+
+  createArtist(id: string) {
+    this.databaseService.favorites.artists.add(id);
+  }
+
+  removeArtist(id: string) {
+    if (!this.databaseService.favorites.artists.has(id)) {
+      throw new NotFoundErrorException();
+    }
+
+    this.databaseService.favorites.artists.delete(id);
+
+    return id;
+  }
 }

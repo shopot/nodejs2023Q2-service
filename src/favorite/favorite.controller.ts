@@ -1,8 +1,25 @@
-import { Controller, Get, Post, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Delete,
+  UseFilters,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FavoriteService } from './favorite.service';
 import { UuidDto } from '../common/dto';
+import { HttpExceptionFilter } from '../common/filters';
+import { TransformInterceptor } from '../common/interceptors';
+import {
+  HttpNotFoundException,
+  HttpServerErrorException,
+  NotFoundErrorException,
+} from '../common/exceptions';
 
 @Controller('favs')
+@UseFilters(new HttpExceptionFilter())
+@UseInterceptors(new TransformInterceptor())
 export class FavoriteController {
   constructor(private readonly favoriteService: FavoriteService) {}
 
@@ -26,7 +43,15 @@ export class FavoriteController {
    */
   @Delete('/track/:id')
   removeTrack(@Param() { id }: UuidDto) {
-    return this.favoriteService.removeTrack(id);
+    try {
+      return this.favoriteService.removeTrack(id);
+    } catch (err) {
+      if (err instanceof NotFoundErrorException) {
+        throw new HttpNotFoundException();
+      }
+
+      throw new HttpServerErrorException();
+    }
   }
 
   /**
@@ -44,7 +69,15 @@ export class FavoriteController {
    */
   @Delete('/album/:id')
   removeAlbum(@Param() { id }: UuidDto) {
-    return this.favoriteService.removeAlbum(id);
+    try {
+      return this.favoriteService.removeAlbum(id);
+    } catch (err) {
+      if (err instanceof NotFoundErrorException) {
+        throw new HttpNotFoundException();
+      }
+
+      throw new HttpServerErrorException();
+    }
   }
 
   /**
@@ -62,6 +95,14 @@ export class FavoriteController {
    */
   @Delete('/artist/:id')
   removeArtist(@Param() { id }: UuidDto) {
-    return this.favoriteService.removeArtist(id);
+    try {
+      return this.favoriteService.removeArtist(id);
+    } catch (err) {
+      if (err instanceof NotFoundErrorException) {
+        throw new HttpNotFoundException();
+      }
+
+      throw new HttpServerErrorException();
+    }
   }
 }

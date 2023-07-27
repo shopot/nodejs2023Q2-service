@@ -1,35 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { BaseRepository } from '../common/database/base-repository';
-import { User } from '../user/entities/user.entity';
-import { Album } from '../album/entities/album.entity';
-import { Artist } from '../artist/entities/artist.entity';
-import { Track } from '../track/entities/track.entity';
+
+import { databaseInstance, DatabaseInstance } from './database-instance';
 
 @Injectable()
 export class DatabaseService {
-  private database: {
-    users: BaseRepository<User>;
-    artists: BaseRepository<Artist>;
-    tracks: BaseRepository<Track>;
-    albums: BaseRepository<Album>;
-    favorites: {
-      artists: Set<string>;
-      albums: Set<string>;
-      tracks: Set<string>;
-    };
-  };
+  private database: DatabaseInstance;
+
   constructor() {
-    this.database = {
-      users: new BaseRepository<User>(),
-      artists: new BaseRepository<Artist>(),
-      tracks: new BaseRepository<Track>(),
-      albums: new BaseRepository<Album>(),
-      favorites: {
-        artists: new Set(),
-        albums: new Set(),
-        tracks: new Set(),
-      },
-    };
+    this.database = databaseInstance;
   }
 
   get users() {

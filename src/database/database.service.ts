@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { databaseInstance, DatabaseInstance } from './database-instance';
+import { databaseFactory, DatabaseInstance } from './factory/database.factory';
 
 @Injectable()
 export class DatabaseService {
   private database: DatabaseInstance;
 
   constructor() {
-    this.database = databaseInstance;
+    this.database = databaseFactory.createInstance();
   }
 
   get users() {

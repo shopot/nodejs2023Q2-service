@@ -10,13 +10,27 @@ import { Request, Response } from 'express';
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
+
     const response = ctx.getResponse<Response>();
+
     const request = ctx.getRequest<Request>();
+
     const status = exception.getStatus();
+
+    const exceptionResponse = exception.getResponse();
+
+    let message = exception.message;
+
+    if (
+      typeof exceptionResponse === 'object' &&
+      'message' in exceptionResponse
+    ) {
+      message = exceptionResponse['message'] || exception.message;
+    }
 
     response.status(status).json({
       statusCode: status,
-      error: exception.getResponse().toString() || exception.message,
+      error: message,
       timestamp: new Date().toISOString(),
       path: request.url,
     });

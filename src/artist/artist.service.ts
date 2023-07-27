@@ -3,17 +3,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { BaseRepository } from '../common/database/base-repository';
 import { Artist } from './entities/artist.entity';
-import { NotFoundException } from '../common/exceptions';
+import { NotFoundErrorException } from '../common/exceptions';
+import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class ArtistService {
-  private artistDb: BaseRepository<Artist>;
-
-  constructor() {
-    this.artistDb = new BaseRepository<Artist>();
-  }
+  constructor(private databaseService: DatabaseService) {}
 
   create(createArtistDto: CreateArtistDto): Artist {
     const artist = new Artist({
@@ -21,40 +17,71 @@ export class ArtistService {
       ...createArtistDto,
     });
 
-    return this.artistDb.create(artist);
+    return this.databaseService.artists.create(artist);
   }
 
   findAll(): Artist[] {
-    return this.artistDb.find();
+    return this.databaseService.artists.find();
   }
 
   findOne(id: string): Artist {
-    const foundArtist = this.artistDb.findOneBy({ id });
+    const foundArtist = this.databaseService.artists.findOneBy({ id });
 
     if (foundArtist === null) {
-      throw new NotFoundException();
+      throw new NotFoundErrorException();
     }
 
     return foundArtist;
   }
 
   update(id: string, { name, grammy }: UpdateArtistDto) {
-    const foundArtist = this.artistDb.findOneBy({ id });
+    const foundArtist = this.databaseService.artists.findOneBy({ id });
 
     if (foundArtist === null) {
-      throw new NotFoundException();
+      throw new NotFoundErrorException();
     }
 
     const updatedArtist = new Artist({ ...foundArtist, name, grammy });
 
-    return this.artistDb.update(id, updatedArtist);
+    return this.databaseService.artists.update(id, updatedArtist);
   }
 
   remove(id: string) {
-    if (!this.artistDb.has(id)) {
-      throw new NotFoundException();
+    if (!this.databaseService.artists.has(id)) {
+      throw new NotFoundErrorException();
     }
 
-    return this.artistDb.remove({ id });
+    // Remove from favorites
+    this.databaseService.favorites.artists.delete(id);
+
+    // Remove from tracks
+    const tracks = this.databaseService.tracks.find();
+
+    tracks.forEach((track) => {
+      if (track.artistId === id) {
+        const updatedTrack = {
+          ...track,
+          artistId: null,
+        };
+
+        this.databaseService.tracks.update(track.id, updatedTrack);
+      }
+    });
+
+    // Remove from albums
+    const albums = this.databaseService.albums.find();
+
+    albums.forEach((album) => {
+      if (album.artistId === id) {
+        const updatedAlbum = {
+          ...album,
+          artistId: null,
+        };
+
+        this.databaseService.albums.update(album.id, updatedAlbum);
+      }
+    });
+
+    return this.databaseService.artists.remove({ id });
   }
 }

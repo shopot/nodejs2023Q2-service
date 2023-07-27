@@ -71,7 +71,7 @@ export class UsersController {
     name: 'id',
     required: true,
     description: 'Should be an id of a user that exists in the database',
-    type: 'uuid v4',
+    type: 'string',
   })
   @ApiOkResponse({
     description: 'A user has been successfully fetched',
@@ -97,7 +97,7 @@ export class UsersController {
     name: 'id',
     required: true,
     description: 'Should be an id of a user that exists in the database',
-    type: 'uuid v4',
+    type: 'string',
   })
   @ApiBody({ type: UpdateUserDto, description: 'A new password for the user' })
   @ApiOkResponse({
@@ -120,12 +120,11 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @Put(':id')
   @ApiParam({
     name: 'id',
     required: true,
     description: 'Should be an id of a user that exists in the database',
-    type: 'uuid v4',
+    type: 'string',
   })
   @ApiNoContentResponse({ description: 'A user has been successfully deleted' })
   @ApiNotFoundResponse({ description: 'A user with given id does not exist.' })

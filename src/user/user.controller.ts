@@ -10,6 +10,8 @@ import {
   UseFilters,
   UseInterceptors,
 } from '@nestjs/common';
+import { StatusCodes } from 'http-status-codes';
+
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -70,7 +72,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(StatusCodes.NO_CONTENT)
   remove(@Param() { id }: UuidDto) {
     try {
       return this.userService.remove(id);

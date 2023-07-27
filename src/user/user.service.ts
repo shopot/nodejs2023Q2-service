@@ -35,7 +35,7 @@ export class UserService {
     const foundUser = this.databaseService.users.findOneBy({ id });
 
     if (foundUser === null) {
-      throw new NotFoundErrorException(`User not found with id: ${id}`);
+      throw new NotFoundErrorException();
     }
 
     return foundUser;

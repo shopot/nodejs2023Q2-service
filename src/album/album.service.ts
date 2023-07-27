@@ -1,26 +1,80 @@
 import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
+
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { DatabaseService } from '../database/database.service';
+import { Album } from './entities/album.entity';
+import { NotFoundErrorException } from '../common/exceptions';
 
 @Injectable()
 export class AlbumService {
+  constructor(private readonly databaseService: DatabaseService) {}
+
   create(createAlbumDto: CreateAlbumDto) {
-    return 'This action adds a new album';
+    const { name, year, artistId } = createAlbumDto;
+
+    const album = new Album({
+      id: uuidv4(),
+      name,
+      year,
+      artistId: artistId || null,
+    });
+
+    return this.databaseService.albums.create(album);
   }
 
   findAll() {
-    return `This action returns all album`;
+    return this.databaseService.albums.find();
   }
 
   findOne(id: string) {
-    return `This action returns a #${id} album`;
+    const foundAlbum = this.databaseService.albums.findOneBy({ id });
+
+    if (foundAlbum === null) {
+      throw new NotFoundErrorException();
+    }
+
+    return foundAlbum;
   }
 
   update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    return `This action updates a #${id} album`;
+    const foundAlbum = this.databaseService.albums.findOneBy({ id });
+
+    if (foundAlbum === null) {
+      throw new NotFoundErrorException();
+    }
+
+    const updatedTrack = new Album({
+      ...foundAlbum,
+      ...updateAlbumDto,
+    });
+
+    return this.databaseService.albums.update(id, updatedTrack);
   }
 
   remove(id: string) {
-    return `This action removes a #${id} album`;
+    if (!this.databaseService.albums.has(id)) {
+      throw new NotFoundErrorException();
+    }
+
+    // Remove from favorites
+    this.databaseService.favorites.albums.delete(id);
+
+    // Remove from tracks
+    const tracks = this.databaseService.tracks.find();
+
+    tracks.forEach((track) => {
+      if (track.albumId === id) {
+        const updatedTrack = {
+          ...track,
+          albumId: null,
+        };
+
+        this.databaseService.tracks.update(track.id, updatedTrack);
+      }
+    });
+
+    return this.databaseService.albums.remove({ id });
   }
 }

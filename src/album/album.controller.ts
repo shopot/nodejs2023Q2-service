@@ -7,13 +7,25 @@ import {
   Delete,
   HttpCode,
   Put,
+  UseFilters,
+  UseInterceptors,
 } from '@nestjs/common';
+
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { UuidDto } from '../common/dto';
+import { HttpExceptionFilter } from '../common/filters';
+import { TransformInterceptor } from '../common/interceptors';
+import {
+  HttpNotFoundException,
+  HttpServerErrorException,
+  NotFoundErrorException,
+} from '../common/exceptions';
 
 @Controller('album')
+@UseFilters(new HttpExceptionFilter())
+@UseInterceptors(new TransformInterceptor())
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
@@ -29,17 +41,41 @@ export class AlbumController {
 
   @Get(':id')
   findOne(@Param() { id }: UuidDto) {
-    return this.albumService.findOne(id);
+    try {
+      return this.albumService.findOne(id);
+    } catch (err) {
+      if (err instanceof NotFoundErrorException) {
+        throw new HttpNotFoundException();
+      }
+
+      throw new HttpServerErrorException();
+    }
   }
 
   @Put(':id')
   update(@Param() { id }: UuidDto, @Body() updateAlbumDto: UpdateAlbumDto) {
-    return this.albumService.update(id, updateAlbumDto);
+    try {
+      return this.albumService.update(id, updateAlbumDto);
+    } catch (err) {
+      if (err instanceof NotFoundErrorException) {
+        throw new HttpNotFoundException();
+      }
+
+      throw new HttpServerErrorException();
+    }
   }
 
   @Delete(':id')
   @HttpCode(204)
   remove(@Param() { id }: UuidDto) {
-    return this.albumService.remove(id);
+    try {
+      return this.albumService.remove(id);
+    } catch (err) {
+      if (err instanceof NotFoundErrorException) {
+        throw new HttpNotFoundException();
+      }
+
+      throw new HttpServerErrorException();
+    }
   }
 }

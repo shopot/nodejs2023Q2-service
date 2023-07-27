@@ -528,7 +528,7 @@ paths:
       tags: *a5
 info:
   title: Home Library Service
-  description: Home music library service
+  description: Home music library service OpenAPI 3.0
   version: "1.0"
   contact: {}
 tags:

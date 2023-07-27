@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 export const createSwaggerDoc = (app: INestApplication) => {
   const config = new DocumentBuilder()
     .setTitle('Home Library Service')
-    .setDescription('Home music library service')
+    .setDescription('Home music library service OpenAPI 3.0')
     .setVersion('1.0')
     .addTag('user')
     .addTag('track')

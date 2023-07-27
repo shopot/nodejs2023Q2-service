@@ -11,7 +11,16 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -24,6 +33,7 @@ import {
 } from '../common/exceptions';
 import { HttpExceptionFilter } from '../common/filters';
 import { TransformInterceptor } from '../common/interceptors';
+import { Artist } from './entities/artist.entity';
 
 @Controller('artist')
 @ApiTags('artist')
@@ -33,16 +43,47 @@ export class ArtistsController {
   constructor(private readonly artistService: ArtistsService) {}
 
   @Post()
+  @ApiBody({
+    type: CreateArtistDto,
+    description: 'A name and grammy for the new artist',
+  })
+  @ApiCreatedResponse({
+    description: 'The artist has been successfully created.',
+    type: Artist,
+  })
+  @ApiBadRequestResponse({
+    description: 'Request body does not contain required fields',
+  })
   create(@Body() createArtistDto: CreateArtistDto) {
     return this.artistService.create(createArtistDto);
   }
 
   @Get()
+  @ApiOkResponse({
+    description: 'A artists has been successfully fetched',
+    type: [Artist],
+  })
   findAll() {
     return this.artistService.findAll();
   }
 
   @Get(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a artist that exists in the database',
+    type: 'string',
+  })
+  @ApiOkResponse({
+    description: 'A artist has been successfully fetched',
+    type: Artist,
+  })
+  @ApiBadRequestResponse({
+    description: 'A artist with given id is invalid (not uuid).',
+  })
+  @ApiNotFoundResponse({
+    description: 'A artist with given id does not exist.',
+  })
   findOne(@Param() { id }: UuidDto) {
     try {
       return this.artistService.findOne(id);
@@ -56,6 +97,26 @@ export class ArtistsController {
   }
 
   @Put(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a artist that exists in the database',
+    type: 'string',
+  })
+  @ApiBody({
+    type: UpdateArtistDto,
+    description: 'A new name and grammy for the artist',
+  })
+  @ApiOkResponse({
+    description: 'A artist has been successfully updated',
+    type: Artist,
+  })
+  @ApiBadRequestResponse({
+    description: 'A artist with given id is invalid (not uuid).',
+  })
+  @ApiNotFoundResponse({
+    description: 'A artist with given id does not exist.',
+  })
   update(@Param() { id }: UuidDto, @Body() updateArtistDto: UpdateArtistDto) {
     try {
       return this.artistService.update(id, updateArtistDto);
@@ -69,6 +130,21 @@ export class ArtistsController {
   }
 
   @Delete(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a artist that exists in the database',
+    type: 'string',
+  })
+  @ApiNoContentResponse({
+    description: 'A artist has been successfully deleted',
+  })
+  @ApiBadRequestResponse({
+    description: 'A artist with given id is invalid (not uuid).',
+  })
+  @ApiNotFoundResponse({
+    description: 'A artist with given id does not exist.',
+  })
   @HttpCode(StatusCodes.NO_CONTENT)
   remove(@Param() { id }: UuidDto) {
     try {

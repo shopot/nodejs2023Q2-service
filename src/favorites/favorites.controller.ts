@@ -9,7 +9,16 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from '@nestjs/swagger';
 
 import { FavoritesService } from './favorites.service';
 import { UuidDto } from '../common/dto';
@@ -22,6 +31,7 @@ import {
   NotFoundErrorException,
   UnprocessableErrorException,
 } from '../common/exceptions';
+import { Favorite } from './entities/favorite.entity';
 
 @Controller('favs')
 @ApiTags('favs')
@@ -31,6 +41,10 @@ export class FavoritesController {
   constructor(private readonly favoriteService: FavoritesService) {}
 
   @Get()
+  @ApiOkResponse({
+    description: 'A artists has been successfully fetched',
+    type: Favorite,
+  })
   findAll() {
     return this.favoriteService.findAll();
   }
@@ -40,6 +54,21 @@ export class FavoritesController {
    * @param UuidDto
    */
   @Post('/track/:id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a track that exists in the database',
+    type: 'string',
+  })
+  @ApiCreatedResponse({
+    description: 'A track has been successfully added',
+  })
+  @ApiBadRequestResponse({
+    description: 'A track with given id is invalid (not uuid).',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: 'A track with given id does not exist',
+  })
   createTrack(@Param() { id }: UuidDto) {
     try {
       return this.favoriteService.createTrack(id);
@@ -57,6 +86,21 @@ export class FavoritesController {
    * @param UuidDto
    */
   @Delete('/track/:id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a track that exists in the database',
+    type: 'string',
+  })
+  @ApiNoContentResponse({
+    description: 'A track has been successfully deleted',
+  })
+  @ApiBadRequestResponse({
+    description: 'A track with given id is invalid (not uuid).',
+  })
+  @ApiNotFoundResponse({
+    description: 'A track with given id does not exist.',
+  })
   @HttpCode(StatusCodes.NO_CONTENT)
   removeTrack(@Param() { id }: UuidDto) {
     try {
@@ -75,6 +119,21 @@ export class FavoritesController {
    * @param UuidDto
    */
   @Post('/album/:id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a album that exists in the database',
+    type: 'string',
+  })
+  @ApiCreatedResponse({
+    description: 'A album has been successfully added',
+  })
+  @ApiBadRequestResponse({
+    description: 'A album with given id is invalid (not uuid).',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: 'A album with given id does not exist',
+  })
   createAlbum(@Param() { id }: UuidDto) {
     try {
       return this.favoriteService.createAlbum(id);
@@ -92,6 +151,21 @@ export class FavoritesController {
    * @param UuidDto
    */
   @Delete('/album/:id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a album that exists in the database',
+    type: 'string',
+  })
+  @ApiNoContentResponse({
+    description: 'A album has been successfully deleted',
+  })
+  @ApiBadRequestResponse({
+    description: 'A album with given id is invalid (not uuid).',
+  })
+  @ApiNotFoundResponse({
+    description: 'A album with given id does not exist.',
+  })
   @HttpCode(StatusCodes.NO_CONTENT)
   removeAlbum(@Param() { id }: UuidDto) {
     try {
@@ -110,6 +184,21 @@ export class FavoritesController {
    * @param UuidDto
    */
   @Post('/artist/:id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a artist that exists in the database',
+    type: 'string',
+  })
+  @ApiCreatedResponse({
+    description: 'A artist has been successfully added',
+  })
+  @ApiBadRequestResponse({
+    description: 'A artist with given id is invalid (not uuid).',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: 'A artist with given id does not exist',
+  })
   createArtist(@Param() { id }: UuidDto) {
     try {
       return this.favoriteService.createArtist(id);
@@ -127,6 +216,21 @@ export class FavoritesController {
    * @param UuidDto
    */
   @Delete('/artist/:id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Should be an id of a artist that exists in the database',
+    type: 'string',
+  })
+  @ApiNoContentResponse({
+    description: 'A artist has been successfully deleted',
+  })
+  @ApiBadRequestResponse({
+    description: 'A artist with given id is invalid (not uuid).',
+  })
+  @ApiNotFoundResponse({
+    description: 'A artist with given id does not exist.',
+  })
   @HttpCode(StatusCodes.NO_CONTENT)
   removeArtist(@Param() { id }: UuidDto) {
     try {

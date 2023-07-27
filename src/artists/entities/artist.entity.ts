@@ -1,6 +1,13 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class Artist {
-  id: string; // uuid v4
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
   name: string;
+
+  @ApiProperty()
   grammy: boolean;
 
   constructor(partial: Partial<Artist>) {

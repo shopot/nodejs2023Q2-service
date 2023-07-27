@@ -12,13 +12,13 @@ import {
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 import {
+  ApiBadRequestResponse,
   ApiBody,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -53,6 +53,9 @@ export class UsersController {
     description: 'The user has been successfully created.',
     type: User,
   })
+  @ApiBadRequestResponse({
+    description: 'Request body does not contain required fields',
+  })
   create(@Body() createUserDto: CreateUserDto): User {
     return this.userService.create(createUserDto);
   }
@@ -76,6 +79,9 @@ export class UsersController {
   @ApiOkResponse({
     description: 'A user has been successfully fetched',
     type: User,
+  })
+  @ApiBadRequestResponse({
+    description: 'A user with given id is invalid (not uuid).',
   })
   @ApiNotFoundResponse({
     description: 'A user with given id does not exist.',
@@ -104,6 +110,9 @@ export class UsersController {
     description: 'A user has been successfully updated',
     type: User,
   })
+  @ApiBadRequestResponse({
+    description: 'A user with given id is invalid (not uuid).',
+  })
   @ApiNotFoundResponse({ description: 'A user with given id does not exist.' })
   update(@Param() { id }: UuidDto, @Body() updateUserDto: UpdateUserDto) {
     try {
@@ -127,6 +136,9 @@ export class UsersController {
     type: 'string',
   })
   @ApiNoContentResponse({ description: 'A user has been successfully deleted' })
+  @ApiBadRequestResponse({
+    description: 'A user with given id is invalid (not uuid).',
+  })
   @ApiNotFoundResponse({ description: 'A user with given id does not exist.' })
   @HttpCode(StatusCodes.NO_CONTENT)
   remove(@Param() { id }: UuidDto) {

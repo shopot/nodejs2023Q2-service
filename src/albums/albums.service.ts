@@ -8,7 +8,7 @@ import { Album } from './entities/album.entity';
 import { NotFoundErrorException } from '../common/exceptions';
 
 @Injectable()
-export class AlbumService {
+export class AlbumsService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   create(createAlbumDto: CreateAlbumDto) {

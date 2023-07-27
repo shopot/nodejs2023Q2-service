@@ -11,7 +11,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 
-import { AlbumService } from './album.service';
+import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { UuidDto } from '../common/dto';
@@ -26,8 +26,8 @@ import {
 @Controller('album')
 @UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
-export class AlbumController {
-  constructor(private readonly albumService: AlbumService) {}
+export class AlbumsController {
+  constructor(private readonly albumService: AlbumsService) {}
 
   @Post()
   create(@Body() createAlbumDto: CreateAlbumDto) {

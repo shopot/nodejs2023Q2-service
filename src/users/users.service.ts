@@ -11,7 +11,7 @@ import {
 import { DatabaseService } from '../database/database.service';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(private databaseService: DatabaseService) {}
 
   create({ login, password }: CreateUserDto): User {

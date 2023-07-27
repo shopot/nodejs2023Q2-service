@@ -8,7 +8,7 @@ import { Track } from './entities/track.entity';
 import { NotFoundErrorException } from '../common/exceptions';
 
 @Injectable()
-export class TrackService {
+export class TracksService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   create(createTrackDto: CreateTrackDto) {

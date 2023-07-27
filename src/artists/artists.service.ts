@@ -8,7 +8,7 @@ import { NotFoundErrorException } from '../common/exceptions';
 import { DatabaseService } from '../database/database.service';
 
 @Injectable()
-export class ArtistService {
+export class ArtistsService {
   constructor(private databaseService: DatabaseService) {}
 
   create(createArtistDto: CreateArtistDto): Artist {

@@ -12,14 +12,11 @@ import {
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { ArtistsService } from './artists.service';
+import { CreateArtistDto } from './dto/create-artist.dto';
+import { UpdateArtistDto } from './dto/update-artist.dto';
 import { UuidDto } from '../common/dto';
-import { User } from './entities/user.entity';
 import {
-  AuthErrorException,
-  HttpForbiddenException,
   HttpNotFoundException,
   HttpServerErrorException,
   NotFoundErrorException,
@@ -27,26 +24,26 @@ import {
 import { HttpExceptionFilter } from '../common/filters';
 import { TransformInterceptor } from '../common/interceptors';
 
-@Controller('user')
+@Controller('artist')
 @UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+export class ArtistsController {
+  constructor(private readonly artistService: ArtistsService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto): User {
-    return this.userService.create(createUserDto);
+  create(@Body() createArtistDto: CreateArtistDto) {
+    return this.artistService.create(createArtistDto);
   }
 
   @Get()
   findAll() {
-    return this.userService.findAll();
+    return this.artistService.findAll();
   }
 
   @Get(':id')
   findOne(@Param() { id }: UuidDto) {
     try {
-      return this.userService.findOne(id);
+      return this.artistService.findOne(id);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();
@@ -57,14 +54,12 @@ export class UserController {
   }
 
   @Put(':id')
-  update(@Param() { id }: UuidDto, @Body() updateUserDto: UpdateUserDto) {
+  update(@Param() { id }: UuidDto, @Body() updateArtistDto: UpdateArtistDto) {
     try {
-      return this.userService.update(id, updateUserDto);
+      return this.artistService.update(id, updateArtistDto);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();
-      } else if (err instanceof AuthErrorException) {
-        throw new HttpForbiddenException();
       }
 
       throw new HttpServerErrorException();
@@ -75,7 +70,7 @@ export class UserController {
   @HttpCode(StatusCodes.NO_CONTENT)
   remove(@Param() { id }: UuidDto) {
     try {
-      return this.userService.remove(id);
+      return this.artistService.remove(id);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();

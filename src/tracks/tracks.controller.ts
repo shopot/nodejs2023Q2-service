@@ -5,45 +5,45 @@ import {
   Body,
   Param,
   Delete,
-  Put,
   HttpCode,
+  Put,
   UseFilters,
   UseInterceptors,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 
-import { ArtistService } from './artist.service';
-import { CreateArtistDto } from './dto/create-artist.dto';
-import { UpdateArtistDto } from './dto/update-artist.dto';
+import { TracksService } from './tracks.service';
+import { CreateTrackDto } from './dto/create-track.dto';
+import { UpdateTrackDto } from './dto/update-track.dto';
 import { UuidDto } from '../common/dto';
+import { HttpExceptionFilter } from '../common/filters';
+import { TransformInterceptor } from '../common/interceptors';
 import {
   HttpNotFoundException,
   HttpServerErrorException,
   NotFoundErrorException,
 } from '../common/exceptions';
-import { HttpExceptionFilter } from '../common/filters';
-import { TransformInterceptor } from '../common/interceptors';
 
-@Controller('artist')
+@Controller('track')
 @UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
-export class ArtistController {
-  constructor(private readonly artistService: ArtistService) {}
+export class TracksController {
+  constructor(private readonly trackService: TracksService) {}
 
   @Post()
-  create(@Body() createArtistDto: CreateArtistDto) {
-    return this.artistService.create(createArtistDto);
+  create(@Body() createTrackDto: CreateTrackDto) {
+    return this.trackService.create(createTrackDto);
   }
 
   @Get()
   findAll() {
-    return this.artistService.findAll();
+    return this.trackService.findAll();
   }
 
   @Get(':id')
   findOne(@Param() { id }: UuidDto) {
     try {
-      return this.artistService.findOne(id);
+      return this.trackService.findOne(id);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();
@@ -54,9 +54,9 @@ export class ArtistController {
   }
 
   @Put(':id')
-  update(@Param() { id }: UuidDto, @Body() updateArtistDto: UpdateArtistDto) {
+  update(@Param() { id }: UuidDto, @Body() updateTrackDto: UpdateTrackDto) {
     try {
-      return this.artistService.update(id, updateArtistDto);
+      return this.trackService.update(id, updateTrackDto);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();
@@ -70,7 +70,7 @@ export class ArtistController {
   @HttpCode(StatusCodes.NO_CONTENT)
   remove(@Param() { id }: UuidDto) {
     try {
-      return this.artistService.remove(id);
+      return this.trackService.remove(id);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();

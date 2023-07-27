@@ -5,45 +5,48 @@ import {
   Body,
   Param,
   Delete,
-  HttpCode,
   Put,
+  HttpCode,
   UseFilters,
   UseInterceptors,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 
-import { TrackService } from './track.service';
-import { CreateTrackDto } from './dto/create-track.dto';
-import { UpdateTrackDto } from './dto/update-track.dto';
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UuidDto } from '../common/dto';
-import { HttpExceptionFilter } from '../common/filters';
-import { TransformInterceptor } from '../common/interceptors';
+import { User } from './entities/user.entity';
 import {
+  AuthErrorException,
+  HttpForbiddenException,
   HttpNotFoundException,
   HttpServerErrorException,
   NotFoundErrorException,
 } from '../common/exceptions';
+import { HttpExceptionFilter } from '../common/filters';
+import { TransformInterceptor } from '../common/interceptors';
 
-@Controller('track')
+@Controller('user')
 @UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
-export class TrackController {
-  constructor(private readonly trackService: TrackService) {}
+export class UsersController {
+  constructor(private readonly userService: UsersService) {}
 
   @Post()
-  create(@Body() createTrackDto: CreateTrackDto) {
-    return this.trackService.create(createTrackDto);
+  create(@Body() createUserDto: CreateUserDto): User {
+    return this.userService.create(createUserDto);
   }
 
   @Get()
   findAll() {
-    return this.trackService.findAll();
+    return this.userService.findAll();
   }
 
   @Get(':id')
   findOne(@Param() { id }: UuidDto) {
     try {
-      return this.trackService.findOne(id);
+      return this.userService.findOne(id);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();
@@ -54,12 +57,14 @@ export class TrackController {
   }
 
   @Put(':id')
-  update(@Param() { id }: UuidDto, @Body() updateTrackDto: UpdateTrackDto) {
+  update(@Param() { id }: UuidDto, @Body() updateUserDto: UpdateUserDto) {
     try {
-      return this.trackService.update(id, updateTrackDto);
+      return this.userService.update(id, updateUserDto);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();
+      } else if (err instanceof AuthErrorException) {
+        throw new HttpForbiddenException();
       }
 
       throw new HttpServerErrorException();
@@ -70,7 +75,7 @@ export class TrackController {
   @HttpCode(StatusCodes.NO_CONTENT)
   remove(@Param() { id }: UuidDto) {
     try {
-      return this.trackService.remove(id);
+      return this.userService.remove(id);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();

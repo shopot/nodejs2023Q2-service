@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 
-import { FavoriteService } from './favorite.service';
+import { FavoritesService } from './favorites.service';
 import { UuidDto } from '../common/dto';
 import { HttpExceptionFilter } from '../common/filters';
 import { TransformInterceptor } from '../common/interceptors';
@@ -25,8 +25,8 @@ import {
 @Controller('favs')
 @UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
-export class FavoriteController {
-  constructor(private readonly favoriteService: FavoriteService) {}
+export class FavoritesController {
+  constructor(private readonly favoriteService: FavoritesService) {}
 
   @Get()
   findAll() {

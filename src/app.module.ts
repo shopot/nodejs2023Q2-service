@@ -3,11 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 
 import configuration from './config/configuration';
 
-import { UserModule } from './user/user.module';
-import { ArtistModule } from './artist/artist.module';
-import { TrackModule } from './track/track.module';
-import { AlbumModule } from './album/album.module';
-import { FavoriteModule } from './favorite/favorite.module';
+import { UsersModule } from './users/users.module';
+import { ArtistsModule } from './artists/artists.module';
+import { TracksModule } from './tracks/tracks.module';
+import { AlbumsModule } from './albums/albums.module';
+import { FavoritesModule } from './favorites/favorites.module';
 
 @Module({
   imports: [
@@ -15,11 +15,11 @@ import { FavoriteModule } from './favorite/favorite.module';
       isGlobal: true,
       load: [configuration],
     }),
-    UserModule,
-    ArtistModule,
-    TrackModule,
-    AlbumModule,
-    FavoriteModule,
+    UsersModule,
+    ArtistsModule,
+    TracksModule,
+    AlbumsModule,
+    FavoritesModule,
   ],
 })
 export class AppModule {}

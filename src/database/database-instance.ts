@@ -1,8 +1,8 @@
 import { BaseRepository } from '../common/database/base-repository';
-import { User } from '../user/entities/user.entity';
-import { Artist } from '../artist/entities/artist.entity';
-import { Track } from '../track/entities/track.entity';
-import { Album } from '../album/entities/album.entity';
+import { User } from '../users/entities/user.entity';
+import { Artist } from '../artists/entities/artist.entity';
+import { Track } from '../tracks/entities/track.entity';
+import { Album } from '../albums/entities/album.entity';
 
 export const databaseInstance = {
   users: new BaseRepository<User>(),

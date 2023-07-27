@@ -6,7 +6,7 @@ import {
 } from '../common/exceptions';
 
 @Injectable()
-export class FavoriteService {
+export class FavoritesService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   findAll() {

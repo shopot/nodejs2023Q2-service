@@ -15,7 +15,6 @@ export class TransformInterceptor implements NestInterceptor {
   ): Observable<any> {
     return next.handle().pipe(
       map((data) => {
-        console.log(data);
         return instanceToPlain(data);
       }),
     );

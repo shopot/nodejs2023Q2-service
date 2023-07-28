@@ -629,8 +629,10 @@ components:
           type: string
         artistId:
           type: string
+          nullable: true
         albumId:
           type: string
+          nullable: true
         duration:
           type: number
       required:
@@ -664,8 +666,10 @@ components:
           type: string
         artistId:
           type: string
+          nullable: true
         albumId:
           type: string
+          nullable: true
         duration:
           type: number
       required:

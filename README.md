@@ -27,9 +27,8 @@ Installing NPM modules
 npm install
 ```
 
-Create .env file (based on .env.example): ./.env
-
-you can change port number in .env file 
+Create .env file (based on .env.example)
+and you can change port number in .env file 
 
 ```
 cp .env.example .env

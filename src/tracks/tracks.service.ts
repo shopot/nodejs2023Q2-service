@@ -14,11 +14,19 @@ export class TracksService {
   create(createTrackDto: CreateTrackDto) {
     const { name, duration, artistId, albumId } = createTrackDto;
 
+    const trackArtistId = this.databaseService.artists.has(artistId)
+      ? artistId
+      : null;
+
+    const trackAlbumId = this.databaseService.albums.has(albumId)
+      ? albumId
+      : null;
+
     const track = new Track({
       id: uuidv4(),
       name,
-      artistId: artistId || null,
-      albumId: albumId || null,
+      artistId: trackArtistId,
+      albumId: trackAlbumId,
       duration,
     });
 

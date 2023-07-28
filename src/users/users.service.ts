@@ -9,16 +9,20 @@ import {
   AuthErrorException,
 } from '../common/exceptions';
 import { DatabaseService } from '../database/database.service';
+import { AuthenticationService } from '../authentication/authentication.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(
+    private databaseService: DatabaseService,
+    private readonly authenticationService: AuthenticationService,
+  ) {}
 
-  create({ login, password }: CreateUserDto): User {
+  async create({ login, password }: CreateUserDto) {
     const user = new User({
       id: uuidv4(),
       login,
-      password,
+      password: await this.authenticationService.hashPassword(password),
       version: 1,
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -27,11 +31,11 @@ export class UsersService {
     return this.databaseService.users.create(user);
   }
 
-  findAll() {
+  async findAll() {
     return this.databaseService.users.find();
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     const foundUser = this.databaseService.users.findOneBy({ id });
 
     if (foundUser === null) {
@@ -41,22 +45,27 @@ export class UsersService {
     return foundUser;
   }
 
-  update(id: string, { oldPassword, newPassword }: UpdateUserDto) {
+  async update(id: string, { oldPassword, newPassword }: UpdateUserDto) {
     const foundUser = this.databaseService.users.findOneBy({ id });
 
     if (foundUser === null) {
       throw new NotFoundErrorException();
     }
 
-    const { password: currentPassword } = foundUser;
+    const { password: hashedPassword } = foundUser;
 
-    if (currentPassword !== oldPassword) {
+    const isPasswordMatching = await this.authenticationService.verifyPassword(
+      oldPassword,
+      hashedPassword,
+    );
+
+    if (!isPasswordMatching) {
       throw new AuthErrorException();
     }
 
     const updatedUser = new User({
       ...foundUser,
-      password: newPassword,
+      password: await this.authenticationService.hashPassword(newPassword),
       updatedAt: Date.now(),
       version: foundUser.version + 1,
     });
@@ -64,7 +73,7 @@ export class UsersService {
     return this.databaseService.users.update(id, updatedUser);
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     if (!this.databaseService.users.has(id)) {
       throw new NotFoundErrorException();
     }

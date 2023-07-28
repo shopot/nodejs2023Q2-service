@@ -56,8 +56,8 @@ export class UsersController {
   @ApiBadRequestResponse({
     description: 'Request body does not contain required fields',
   })
-  create(@Body() createUserDto: CreateUserDto): User {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.userService.create(createUserDto);
   }
 
   @Get()
@@ -65,8 +65,8 @@ export class UsersController {
     description: 'A users has been successfully fetched',
     type: [User],
   })
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    return await this.userService.findAll();
   }
 
   @Get(':id')
@@ -86,9 +86,9 @@ export class UsersController {
   @ApiNotFoundResponse({
     description: 'A user with given id does not exist.',
   })
-  findOne(@Param() { id }: UuidDto) {
+  async findOne(@Param() { id }: UuidDto) {
     try {
-      return this.userService.findOne(id);
+      return await this.userService.findOne(id);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();
@@ -114,9 +114,9 @@ export class UsersController {
     description: 'A user with given id is invalid (not uuid).',
   })
   @ApiNotFoundResponse({ description: 'A user with given id does not exist.' })
-  update(@Param() { id }: UuidDto, @Body() updateUserDto: UpdateUserDto) {
+  async update(@Param() { id }: UuidDto, @Body() updateUserDto: UpdateUserDto) {
     try {
-      return this.userService.update(id, updateUserDto);
+      return await this.userService.update(id, updateUserDto);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();
@@ -141,9 +141,9 @@ export class UsersController {
   })
   @ApiNotFoundResponse({ description: 'A user with given id does not exist.' })
   @HttpCode(StatusCodes.NO_CONTENT)
-  remove(@Param() { id }: UuidDto) {
+  async remove(@Param() { id }: UuidDto) {
     try {
-      return this.userService.remove(id);
+      return await this.userService.remove(id);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();

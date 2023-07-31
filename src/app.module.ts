@@ -8,6 +8,8 @@ import { ArtistsModule } from './artists/artists.module';
 import { TracksModule } from './tracks/tracks.module';
 import { AlbumsModule } from './albums/albums.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { DatabaseModule } from './database/database.module';
+import { AuthenticationModule } from './authentication/authentication.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { FavoritesModule } from './favorites/favorites.module';
     TracksModule,
     AlbumsModule,
     FavoritesModule,
+    DatabaseModule,
+    AuthenticationModule,
   ],
 })
 export class AppModule {}

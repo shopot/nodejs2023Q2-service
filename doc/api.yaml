@@ -418,7 +418,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Favorite"
+                $ref: "#/components/schemas/FavoritesDto"
       tags: &a5
         - favs
   "/favs/track/{id}":
@@ -715,7 +715,7 @@ components:
         artistId:
           type: string
           nullable: true
-    Favorite:
+    FavoritesDto:
       type: object
       properties:
         artists:

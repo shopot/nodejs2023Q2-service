@@ -6,10 +6,14 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { NotFoundErrorException } from '../common/exceptions';
 import { DatabaseService } from '../database/database.service';
+import { FavoritesService } from '../favorites/favorites.service';
 
 @Injectable()
 export class ArtistsService {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly favoritesService: FavoritesService,
+  ) {}
 
   create(createArtistDto: CreateArtistDto): Artist {
     const artist = new Artist({
@@ -52,7 +56,11 @@ export class ArtistsService {
     }
 
     // Remove from favorites
-    this.databaseService.favorites.artists.delete(id);
+    try {
+      this.favoritesService.removeArtist(id);
+    } catch {
+      // nobody
+    }
 
     // Remove from tracks
     const tracks = this.databaseService.tracks.find();

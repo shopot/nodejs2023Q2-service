@@ -6,10 +6,14 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 import { DatabaseService } from '../database/database.service';
 import { Album } from './entities/album.entity';
 import { NotFoundErrorException } from '../common/exceptions';
+import { FavoritesService } from '../favorites/favorites.service';
 
 @Injectable()
 export class AlbumsService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly favoritesService: FavoritesService,
+  ) {}
 
   create(createAlbumDto: CreateAlbumDto) {
     const { name, year, artistId } = createAlbumDto;
@@ -59,7 +63,11 @@ export class AlbumsService {
     }
 
     // Remove from favorites
-    this.databaseService.favorites.albums.delete(id);
+    try {
+      this.favoritesService.removeAlbum(id);
+    } catch {
+      // nobody
+    }
 
     // Remove from tracks
     const tracks = this.databaseService.tracks.find();

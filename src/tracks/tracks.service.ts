@@ -6,10 +6,14 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 import { DatabaseService } from '../database/database.service';
 import { Track } from './entities/track.entity';
 import { NotFoundErrorException } from '../common/exceptions';
+import { FavoritesService } from '../favorites/favorites.service';
 
 @Injectable()
 export class TracksService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly favoritesService: FavoritesService,
+  ) {}
 
   create(createTrackDto: CreateTrackDto) {
     const { name, duration, artistId, albumId } = createTrackDto;
@@ -68,7 +72,11 @@ export class TracksService {
     }
 
     // Remove from favorites
-    this.databaseService.favorites.tracks.delete(id);
+    try {
+      this.favoritesService.removeTrack(id);
+    } catch {
+      // nobody
+    }
 
     return this.databaseService.tracks.remove({ id });
   }

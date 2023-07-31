@@ -31,7 +31,7 @@ import {
   NotFoundErrorException,
   UnprocessableErrorException,
 } from '../common/exceptions';
-import { Favorite } from './entities/favorite.entity';
+import { FavoritesDto } from './dto/favorites.dto';
 
 @Controller('favs')
 @ApiTags('favs')
@@ -43,7 +43,7 @@ export class FavoritesController {
   @Get()
   @ApiOkResponse({
     description: 'A artists has been successfully fetched',
-    type: Favorite,
+    type: FavoritesDto,
   })
   findAll() {
     return this.favoriteService.findAll();

@@ -14,9 +14,9 @@ export const createInstance = () => {
       tracks: new BaseRepository<Track>(),
       albums: new BaseRepository<Album>(),
       favorites: {
-        artists: new Map<string, Artist>(),
-        albums: new Map<string, Album>(),
-        tracks: new Map<string, Track>(),
+        artists: [] as string[],
+        albums: [] as string[],
+        tracks: [] as string[],
       },
     };
   }

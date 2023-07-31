@@ -7,6 +7,7 @@ export class DatabaseService {
   private database: DatabaseInstance;
 
   constructor() {
+    console.log('DatabaseService is created');
     this.database = databaseFactory.createInstance();
   }
 

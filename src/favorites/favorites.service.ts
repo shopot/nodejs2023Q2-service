@@ -10,82 +10,118 @@ export class FavoritesService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   findAll() {
+    const artists = this.databaseService.favorites.artists.map((id) =>
+      this.databaseService.artists.findOneBy({ id }),
+    );
+
+    const albums = this.databaseService.favorites.albums.map((id) =>
+      this.databaseService.albums.findOneBy({ id }),
+    );
+
+    const tracks = this.databaseService.favorites.tracks.map((id) =>
+      this.databaseService.tracks.findOneBy({ id }),
+    );
+
     return {
-      artists: Array.from(this.databaseService.favorites.artists.values()),
-      albums: Array.from(this.databaseService.favorites.albums.values()),
-      tracks: Array.from(this.databaseService.favorites.tracks.values()),
+      artists,
+      albums,
+      tracks,
     };
   }
 
-  createTrack(id: string) {
-    const foundTrack = this.databaseService.tracks.findOneBy({ id });
-
-    if (foundTrack === null) {
+  createTrack(trackId: string) {
+    if (!this.databaseService.tracks.has(trackId)) {
       throw new UnprocessableErrorException();
     }
 
-    this.databaseService.favorites.tracks.set(id, foundTrack);
+    const foundTrackIndex = this.databaseService.favorites.tracks.findIndex(
+      (id) => id === trackId,
+    );
+
+    if (foundTrackIndex === -1) {
+      this.databaseService.favorites.tracks.push(trackId);
+
+      return trackId;
+    }
+
+    return null;
   }
 
-  removeTrack(id: string) {
-    if (!this.databaseService.tracks.has(id)) {
+  removeTrack(trackId: string) {
+    const foundTrackIndex = this.databaseService.favorites.tracks.findIndex(
+      (id) => id === trackId,
+    );
+
+    if (foundTrackIndex === -1) {
       throw new NotFoundErrorException();
     }
 
-    if (!this.databaseService.favorites.tracks.has(id)) {
-      throw new NotFoundErrorException();
-    }
+    this.databaseService.favorites.tracks.splice(foundTrackIndex, 1);
 
-    this.databaseService.favorites.tracks.delete(id);
-
-    return id;
+    return trackId;
   }
 
-  createAlbum(id: string) {
-    const foundAlbum = this.databaseService.albums.findOneBy({ id });
-
-    if (foundAlbum === null) {
+  createAlbum(albumId: string) {
+    if (!this.databaseService.albums.has(albumId)) {
       throw new UnprocessableErrorException();
     }
 
-    this.databaseService.favorites.albums.set(id, foundAlbum);
+    const foundAlbumIndex = this.databaseService.favorites.albums.findIndex(
+      (id) => id === albumId,
+    );
+
+    if (foundAlbumIndex === -1) {
+      this.databaseService.favorites.albums.push(albumId);
+
+      return albumId;
+    }
+
+    return null;
   }
 
-  removeAlbum(id: string) {
-    if (!this.databaseService.albums.has(id)) {
+  removeAlbum(albumId: string) {
+    const foundAlbumIndex = this.databaseService.favorites.albums.findIndex(
+      (id) => id === albumId,
+    );
+
+    if (foundAlbumIndex === -1) {
       throw new NotFoundErrorException();
     }
 
-    if (!this.databaseService.favorites.albums.has(id)) {
-      throw new NotFoundErrorException();
-    }
+    this.databaseService.favorites.albums.splice(foundAlbumIndex, 1);
 
-    this.databaseService.favorites.albums.delete(id);
-
-    return id;
+    return albumId;
   }
 
-  createArtist(id: string) {
-    const foundArtist = this.databaseService.artists.findOneBy({ id });
-
-    if (foundArtist === null) {
+  createArtist(artistId: string) {
+    if (!this.databaseService.artists.has(artistId)) {
       throw new UnprocessableErrorException();
     }
 
-    this.databaseService.favorites.artists.set(id, foundArtist);
+    const foundArtistIndex = this.databaseService.favorites.artists.findIndex(
+      (id) => id === artistId,
+    );
+
+    if (foundArtistIndex === -1) {
+      this.databaseService.favorites.artists.push(artistId);
+
+      return artistId;
+    }
+
+    return null;
   }
 
-  removeArtist(id: string) {
-    if (!this.databaseService.artists.has(id)) {
+  removeArtist(artistId: string) {
+    const foundArtistIndex = this.databaseService.favorites.artists.findIndex(
+      (id) => id === artistId,
+    );
+
+    if (foundArtistIndex === -1) {
       throw new NotFoundErrorException();
     }
 
-    if (!this.databaseService.favorites.artists.has(id)) {
-      throw new NotFoundErrorException();
-    }
+    this.databaseService.favorites.artists.splice(foundArtistIndex, 1);
 
-    this.databaseService.favorites.artists.delete(id);
-
-    return id;
+    return artistId;
   }
 }

@@ -38,8 +38,8 @@ lerna-debug.log*
 .env
 
 # app
-/docker/pgdata/*
+/docker/data/*
 /http-client
 /docker-build.sh
-/src/create-docs.ts
+/src/bin/create-docs.ts
 /doc/api-old.yaml

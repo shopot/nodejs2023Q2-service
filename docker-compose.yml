@@ -1,0 +1,62 @@
+services:
+  db:
+    container_name: "nodejs2023Q2-service-db"
+    build:
+      context: .
+      dockerfile: docker/bin/postgres/Dockerfile
+    environment:
+      POSTGRES_USERNAME: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    volumes:
+      - ./docker/data/pg_data:/var/lib/postgresql/data
+      - ./docker/data/pg_logs:/usr/local/var/log/
+      - ./docker/configs/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./docker/configs/pg_hba.conf:/etc/postgresql/pg_hba.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    networks:
+      backend:
+        ipv4_address: 10.5.0.2
+
+  app:
+    container_name: "nodejs2023Q2-service-app"
+    build:
+      context: .
+      dockerfile: docker/bin/api/Dockerfile
+      # Only will build development stage from our dockerfile
+      target: development
+    restart: "always"
+    volumes:
+      - ./src:/usr/src/app/src
+      - /usr/src/app/node_modules
+    environment:
+      PG_HOST: db
+    env_file:
+      - .env
+
+    # Run a command against the development stage of the image
+    command: npm run start:dev
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - db
+    networks:
+      backend:
+        ipv4_address: 10.5.0.3
+
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.5.0.0/16

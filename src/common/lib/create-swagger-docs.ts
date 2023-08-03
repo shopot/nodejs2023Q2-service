@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-export const createSwaggerDoc = (app: INestApplication) => {
+export const createSwaggerDocs = (app: INestApplication) => {
   const config = new DocumentBuilder()
     .setTitle('Home Library Service')
     .setDescription('Home music library service OpenAPI 3.0')

@@ -19,10 +19,10 @@ services:
     restart: unless-stopped
     volumes:
       - ./docker/data/pg_data:/var/lib/postgresql/data
-      - ./docker/data/pg_logs:/usr/local/var/log/
+      - ./docker/data/pg_logs:/pg_logs
       - ./docker/configs/postgresql.conf:/etc/postgresql/postgresql.conf
       - ./docker/configs/pg_hba.conf:/etc/postgresql/pg_hba.conf
-    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf -c logging_collector=on -c log_destination=stderr -c log_directory=/pg_logs
     networks:
       backend:
         ipv4_address: 10.5.0.2

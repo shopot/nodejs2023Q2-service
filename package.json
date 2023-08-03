@@ -23,7 +23,7 @@
     "migration:create": "typeorm migration:create ./src/database/migrations/MIGRATION_NAME",
     "migration:run": "npm run typeorm -- --dataSource=src/config/typeorm-cli.config.ts migration:run",
     "migration:revert": "npm run typeorm -- --dataSource=src/config/typeorm-cli.config.ts migration:revert",
-    "docs": "nest start --entryFile create-docs"
+    "docs": "nest start --entryFile bin/create-docs"
   },
   "jest": {
     "moduleFileExtensions": [

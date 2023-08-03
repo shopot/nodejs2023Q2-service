@@ -113,8 +113,8 @@ export class InitialSchema1690950864750 implements MigrationInterface {
       'album',
       new TableForeignKey({
         columnNames: ['artistId'],
-        referencedColumnNames: ['id'],
         referencedTableName: 'artist',
+        referencedColumnNames: ['id'],
         onDelete: 'SET NULL',
       }),
     );
@@ -160,8 +160,8 @@ export class InitialSchema1690950864750 implements MigrationInterface {
       'track',
       new TableForeignKey({
         columnNames: ['albumId'],
-        referencedColumnNames: ['id'],
         referencedTableName: 'album',
+        referencedColumnNames: ['id'],
         onDelete: 'SET NULL',
       }),
     );
@@ -170,8 +170,8 @@ export class InitialSchema1690950864750 implements MigrationInterface {
       'track',
       new TableForeignKey({
         columnNames: ['artistId'],
-        referencedColumnNames: ['id'],
         referencedTableName: 'artist',
+        referencedColumnNames: ['id'],
         onDelete: 'SET NULL',
       }),
     );
@@ -204,7 +204,7 @@ export class InitialSchema1690950864750 implements MigrationInterface {
 
     await queryRunner.dropTable('album');
 
-    await queryRunner.dropTable('artists');
+    await queryRunner.dropTable('artist');
 
     await queryRunner.dropTable('track');
   }

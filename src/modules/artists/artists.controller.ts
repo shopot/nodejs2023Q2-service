@@ -25,14 +25,14 @@ import {
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { UuidDto } from '../common/dto';
+import { UuidDto } from '../../common/dto';
 import {
   HttpNotFoundException,
   HttpServerErrorException,
   NotFoundErrorException,
-} from '../common/exceptions';
-import { HttpExceptionFilter } from '../common/filters';
-import { TransformInterceptor } from '../common/interceptors';
+} from '../../common/exceptions';
+import { HttpExceptionFilter } from '../../common/filters';
+import { TransformInterceptor } from '../../common/interceptors';
 import { Artist } from './entities/artist.entity';
 
 @Controller('artist')
@@ -54,8 +54,8 @@ export class ArtistsController {
   @ApiBadRequestResponse({
     description: 'Request body does not contain required fields',
   })
-  create(@Body() createArtistDto: CreateArtistDto) {
-    return this.artistService.create(createArtistDto);
+  async create(@Body() createArtistDto: CreateArtistDto) {
+    return await this.artistService.create(createArtistDto);
   }
 
   @Get()
@@ -63,8 +63,8 @@ export class ArtistsController {
     description: 'A artists has been successfully fetched',
     type: [Artist],
   })
-  findAll() {
-    return this.artistService.findAll();
+  async findAll() {
+    return await this.artistService.findAll();
   }
 
   @Get(':id')
@@ -84,9 +84,9 @@ export class ArtistsController {
   @ApiNotFoundResponse({
     description: 'A artist with given id does not exist.',
   })
-  findOne(@Param() { id }: UuidDto) {
+  async findOne(@Param() { id }: UuidDto) {
     try {
-      return this.artistService.findOne(id);
+      return await this.artistService.findOne(id);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();
@@ -117,9 +117,12 @@ export class ArtistsController {
   @ApiNotFoundResponse({
     description: 'A artist with given id does not exist.',
   })
-  update(@Param() { id }: UuidDto, @Body() updateArtistDto: UpdateArtistDto) {
+  async update(
+    @Param() { id }: UuidDto,
+    @Body() updateArtistDto: UpdateArtistDto,
+  ) {
     try {
-      return this.artistService.update(id, updateArtistDto);
+      return await this.artistService.update(id, updateArtistDto);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();
@@ -146,9 +149,9 @@ export class ArtistsController {
     description: 'A artist with given id does not exist.',
   })
   @HttpCode(StatusCodes.NO_CONTENT)
-  remove(@Param() { id }: UuidDto) {
+  async remove(@Param() { id }: UuidDto) {
     try {
-      return this.artistService.remove(id);
+      return await this.artistService.remove(id);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();

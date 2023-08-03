@@ -6,9 +6,10 @@ import configuration from './config/configuration';
 
 import { UsersModule } from './modules/users/users.module';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
-
 import { ArtistsModule } from './modules/artists/artists.module';
 import { AlbumsModule } from './modules/albums/albums.module';
+import { TracksModule } from './modules/tracks/tracks.module';
+import { FavoritesModule } from './modules/favorites/favorites.module';
 
 @Module({
   imports: [
@@ -18,9 +19,9 @@ import { AlbumsModule } from './modules/albums/albums.module';
     }),
     UsersModule,
     ArtistsModule,
-    // TracksModule,
+    TracksModule,
     AlbumsModule,
-    // FavoritesModule,
+    FavoritesModule,
     AuthenticationModule,
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],

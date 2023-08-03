@@ -24,14 +24,14 @@ import {
 import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { UuidDto } from '../common/dto';
-import { HttpExceptionFilter } from '../common/filters';
-import { TransformInterceptor } from '../common/interceptors';
+import { UuidDto } from '../../common/dto';
+import { HttpExceptionFilter } from '../../common/filters';
+import { TransformInterceptor } from '../../common/interceptors';
 import {
   HttpNotFoundException,
   HttpServerErrorException,
   NotFoundErrorException,
-} from '../common/exceptions';
+} from '../../common/exceptions';
 import { Album } from './entities/album.entity';
 
 @Controller('album')
@@ -53,7 +53,7 @@ export class AlbumsController {
   @ApiBadRequestResponse({
     description: 'Request body does not contain required fields',
   })
-  create(@Body() createAlbumDto: CreateAlbumDto) {
+  async create(@Body() createAlbumDto: CreateAlbumDto) {
     return this.albumService.create(createAlbumDto);
   }
 
@@ -62,8 +62,8 @@ export class AlbumsController {
     description: 'A albums has been successfully fetched',
     type: [Album],
   })
-  findAll() {
-    return this.albumService.findAll();
+  async findAll() {
+    return await this.albumService.findAll();
   }
 
   @Get(':id')
@@ -83,9 +83,9 @@ export class AlbumsController {
   @ApiNotFoundResponse({
     description: 'A album with given id does not exist.',
   })
-  findOne(@Param() { id }: UuidDto) {
+  async findOne(@Param() { id }: UuidDto) {
     try {
-      return this.albumService.findOne(id);
+      return await this.albumService.findOne(id);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();
@@ -114,9 +114,12 @@ export class AlbumsController {
     description: 'A album with given id is invalid (not uuid).',
   })
   @ApiNotFoundResponse({ description: 'A album with given id does not exist.' })
-  update(@Param() { id }: UuidDto, @Body() updateAlbumDto: UpdateAlbumDto) {
+  async update(
+    @Param() { id }: UuidDto,
+    @Body() updateAlbumDto: UpdateAlbumDto,
+  ) {
     try {
-      return this.albumService.update(id, updateAlbumDto);
+      return await this.albumService.update(id, updateAlbumDto);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();
@@ -141,9 +144,9 @@ export class AlbumsController {
   })
   @ApiNotFoundResponse({ description: 'A album with given id does not exist.' })
   @HttpCode(204)
-  remove(@Param() { id }: UuidDto) {
+  async remove(@Param() { id }: UuidDto) {
     try {
-      return this.albumService.remove(id);
+      return await this.albumService.remove(id);
     } catch (err) {
       if (err instanceof NotFoundErrorException) {
         throw new HttpNotFoundException();

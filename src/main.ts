@@ -4,7 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 
 import { AppModule } from './app.module';
-import { createSwaggerDoc } from './shared/lib';
+import { createSwaggerDocs } from './common/lib';
 
 const PORT = process.env.PORT || 4000;
 
@@ -16,7 +16,7 @@ const bootstrap = async () => {
   app.useGlobalPipes(new ValidationPipe());
 
   if (NODE_ENV === 'development') {
-    createSwaggerDoc(app);
+    createSwaggerDocs(app);
   }
 
   await app.listen(PORT, () => {

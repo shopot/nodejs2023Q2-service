@@ -1,52 +1,51 @@
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import {
-  NotFoundErrorException,
   AuthErrorException,
-} from '../common/exceptions';
-import { DatabaseService } from '../database/database.service';
+  NotFoundErrorException,
+} from '../../common/exceptions';
 import { AuthenticationService } from '../authentication/authentication.service';
+import { UserTransformer } from './transformers/user.transformer';
 
 @Injectable()
 export class UsersService {
   constructor(
-    private databaseService: DatabaseService,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly authenticationService: AuthenticationService,
   ) {}
 
   async create({ login, password }: CreateUserDto) {
-    const user = new User({
-      id: uuidv4(),
+    const createdUser = await this.userRepository.save({
       login,
       password: await this.authenticationService.hashPassword(password),
-      version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
     });
 
-    return this.databaseService.users.create(user);
+    return new UserTransformer(createdUser);
   }
 
   async findAll() {
-    return this.databaseService.users.find();
+    return (await this.userRepository.find()).map(
+      (user) => new UserTransformer(user),
+    );
   }
 
   async findOne(id: string) {
-    const foundUser = this.databaseService.users.findOneBy({ id });
+    const foundUser = await this.userRepository.findOne({ where: { id } });
 
     if (foundUser === null) {
       throw new NotFoundErrorException();
     }
 
-    return foundUser;
+    return new UserTransformer(foundUser);
   }
 
   async update(id: string, { oldPassword, newPassword }: UpdateUserDto) {
-    const foundUser = this.databaseService.users.findOneBy({ id });
+    const foundUser = await this.userRepository.findOne({ where: { id } });
 
     if (foundUser === null) {
       throw new NotFoundErrorException();
@@ -63,21 +62,26 @@ export class UsersService {
       throw new AuthErrorException();
     }
 
-    const updatedUser = new User({
-      ...foundUser,
+    const updateResult = await this.userRepository.update(id, {
       password: await this.authenticationService.hashPassword(newPassword),
-      updatedAt: Date.now(),
-      version: foundUser.version + 1,
+      updatedAt: new Date(),
+      version: +foundUser.version + 1,
     });
 
-    return this.databaseService.users.update(id, updatedUser);
+    if (updateResult.affected !== 1) {
+      throw new Error('Internal server error');
+    }
+
+    return this.findOne(id);
   }
 
   async remove(id: string) {
-    if (!this.databaseService.users.has(id)) {
+    const foundUser = await this.userRepository.findOne({ where: { id } });
+
+    if (foundUser === null) {
       throw new NotFoundErrorException();
     }
 
-    return this.databaseService.users.remove({ id });
+    return this.userRepository.remove(foundUser);
   }
 }

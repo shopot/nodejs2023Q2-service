@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
-import { SALT_OR_ROUNDS } from '../common/constants';
+import { SALT_OR_ROUNDS } from '../../common/constants';
 
 @Injectable()
 export class AuthenticationService {

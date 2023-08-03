@@ -25,7 +25,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UuidDto } from '../common/dto';
+import { UuidDto } from '../../common/dto';
 import { User } from './entities/user.entity';
 import {
   AuthErrorException,
@@ -33,9 +33,9 @@ import {
   HttpNotFoundException,
   HttpServerErrorException,
   NotFoundErrorException,
-} from '../common/exceptions';
-import { HttpExceptionFilter } from '../common/filters';
-import { TransformInterceptor } from '../common/interceptors';
+} from '../../common/exceptions';
+import { HttpExceptionFilter } from '../../common/filters';
+import { TransformInterceptor } from '../../common/interceptors';
 
 @Controller('user')
 @ApiTags('user')
@@ -57,7 +57,11 @@ export class UsersController {
     description: 'Request body does not contain required fields',
   })
   async create(@Body() createUserDto: CreateUserDto) {
-    return await this.userService.create(createUserDto);
+    try {
+      return await this.userService.create(createUserDto);
+    } catch {
+      throw new HttpServerErrorException();
+    }
   }
 
   @Get()

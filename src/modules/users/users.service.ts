@@ -5,10 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import {
-  AuthErrorException,
-  NotFoundErrorException,
-} from '../../common/exceptions';
+import { AppAuthError, AppNotFoundError } from '../../common/exceptions';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { UserTransformer } from './transformers/user.transformer';
 
@@ -38,7 +35,7 @@ export class UsersService {
     const foundUser = await this.userRepository.findOne({ where: { id } });
 
     if (foundUser === null) {
-      throw new NotFoundErrorException();
+      throw new AppNotFoundError();
     }
 
     return new UserTransformer(foundUser);
@@ -48,7 +45,7 @@ export class UsersService {
     const foundUser = await this.userRepository.findOne({ where: { id } });
 
     if (foundUser === null) {
-      throw new NotFoundErrorException();
+      throw new AppNotFoundError();
     }
 
     const { password: hashedPassword } = foundUser;
@@ -59,7 +56,7 @@ export class UsersService {
     );
 
     if (!isPasswordMatching) {
-      throw new AuthErrorException();
+      throw new AppAuthError();
     }
 
     const updateResult = await this.userRepository.update(id, {
@@ -79,7 +76,7 @@ export class UsersService {
     const foundUser = await this.userRepository.findOne({ where: { id } });
 
     if (foundUser === null) {
-      throw new NotFoundErrorException();
+      throw new AppNotFoundError();
     }
 
     return this.userRepository.remove(foundUser);

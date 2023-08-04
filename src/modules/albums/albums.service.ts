@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
-import { NotFoundErrorException } from '../../common/exceptions';
+import { AppNotFoundError } from '../../common/exceptions';
 
 @Injectable()
 export class AlbumsService {
@@ -26,7 +26,7 @@ export class AlbumsService {
     const foundAlbum = await this.albumRepository.findOne({ where: { id } });
 
     if (foundAlbum === null) {
-      throw new NotFoundErrorException();
+      throw new AppNotFoundError();
     }
 
     return foundAlbum;

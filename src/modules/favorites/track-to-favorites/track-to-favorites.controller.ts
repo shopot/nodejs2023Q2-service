@@ -6,6 +6,9 @@ import {
   UseFilters,
   UseInterceptors,
   HttpCode,
+  NotFoundException,
+  InternalServerErrorException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 import {
@@ -21,11 +24,8 @@ import {
 import { HttpExceptionFilter } from '../../../common/filters';
 import { TransformInterceptor } from '../../../common/interceptors';
 import {
-  HttpNotFoundException,
-  HttpServerErrorException,
-  HttpUnprocessableException,
-  NotFoundErrorException,
-  UnprocessableErrorException,
+  AppNotFoundError,
+  AppUnprocessableError,
 } from '../../../common/exceptions';
 import { CreateTrackToFavoritesDto } from './dto/create-track-to-favorites.dto';
 import { DeleteTrackToFavoritesDto } from './dto/delete-track-to-favorites.dto';
@@ -58,11 +58,11 @@ export class TrackToFavoritesController {
     try {
       return await this.track2fService.createTrack(id);
     } catch (err) {
-      if (err instanceof UnprocessableErrorException) {
-        throw new HttpUnprocessableException();
+      if (err instanceof AppUnprocessableError) {
+        throw new UnprocessableEntityException();
       }
 
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 
@@ -87,11 +87,11 @@ export class TrackToFavoritesController {
     try {
       return await this.track2fService.removeTrack(id);
     } catch (err) {
-      if (err instanceof NotFoundErrorException) {
-        throw new HttpNotFoundException();
+      if (err instanceof AppNotFoundError) {
+        throw new NotFoundException();
       }
 
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 }

@@ -9,6 +9,8 @@ import {
   Put,
   UseFilters,
   UseInterceptors,
+  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -27,11 +29,7 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 import { UuidDto } from '../../common/dto';
 import { HttpExceptionFilter } from '../../common/filters';
 import { TransformInterceptor } from '../../common/interceptors';
-import {
-  HttpNotFoundException,
-  HttpServerErrorException,
-  NotFoundErrorException,
-} from '../../common/exceptions';
+import { AppNotFoundError } from '../../common/exceptions';
 import { Album } from './entities/album.entity';
 
 @Controller('album')
@@ -87,11 +85,11 @@ export class AlbumsController {
     try {
       return await this.albumService.findOne(id);
     } catch (err) {
-      if (err instanceof NotFoundErrorException) {
-        throw new HttpNotFoundException();
+      if (err instanceof AppNotFoundError) {
+        throw new NotFoundException();
       }
 
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 
@@ -121,11 +119,11 @@ export class AlbumsController {
     try {
       return await this.albumService.update(id, updateAlbumDto);
     } catch (err) {
-      if (err instanceof NotFoundErrorException) {
-        throw new HttpNotFoundException();
+      if (err instanceof AppNotFoundError) {
+        throw new NotFoundException();
       }
 
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 
@@ -148,11 +146,11 @@ export class AlbumsController {
     try {
       return await this.albumService.remove(id);
     } catch (err) {
-      if (err instanceof NotFoundErrorException) {
-        throw new HttpNotFoundException();
+      if (err instanceof AppNotFoundError) {
+        throw new NotFoundException();
       }
 
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 }

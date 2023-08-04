@@ -9,6 +9,9 @@ import {
   HttpCode,
   UseFilters,
   UseInterceptors,
+  ForbiddenException,
+  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 import {
@@ -27,13 +30,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UuidDto } from '../../common/dto';
 import { User } from './entities/user.entity';
-import {
-  AuthErrorException,
-  HttpForbiddenException,
-  HttpNotFoundException,
-  HttpServerErrorException,
-  NotFoundErrorException,
-} from '../../common/exceptions';
+import { AppAuthError, AppNotFoundError } from '../../common/exceptions';
 import { HttpExceptionFilter } from '../../common/filters';
 import { TransformInterceptor } from '../../common/interceptors';
 
@@ -60,7 +57,7 @@ export class UsersController {
     try {
       return await this.userService.create(createUserDto);
     } catch {
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 
@@ -94,11 +91,11 @@ export class UsersController {
     try {
       return await this.userService.findOne(id);
     } catch (err) {
-      if (err instanceof NotFoundErrorException) {
-        throw new HttpNotFoundException();
+      if (err instanceof AppNotFoundError) {
+        throw new NotFoundException();
       }
 
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 
@@ -122,13 +119,13 @@ export class UsersController {
     try {
       return await this.userService.update(id, updateUserDto);
     } catch (err) {
-      if (err instanceof NotFoundErrorException) {
-        throw new HttpNotFoundException();
-      } else if (err instanceof AuthErrorException) {
-        throw new HttpForbiddenException();
+      if (err instanceof AppNotFoundError) {
+        throw new NotFoundException();
+      } else if (err instanceof AppAuthError) {
+        throw new ForbiddenException();
       }
 
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 
@@ -149,11 +146,11 @@ export class UsersController {
     try {
       return await this.userService.remove(id);
     } catch (err) {
-      if (err instanceof NotFoundErrorException) {
-        throw new HttpNotFoundException();
+      if (err instanceof AppNotFoundError) {
+        throw new NotFoundException();
       }
 
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 }

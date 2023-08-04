@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
-import { NotFoundErrorException } from '../../common/exceptions';
+import { AppNotFoundError } from '../../common/exceptions';
 
 @Injectable()
 export class ArtistsService {
@@ -26,7 +26,7 @@ export class ArtistsService {
     const foundArtist = await this.artistRepository.findOne({ where: { id } });
 
     if (foundArtist === null) {
-      throw new NotFoundErrorException();
+      throw new AppNotFoundError();
     }
     return foundArtist;
   }

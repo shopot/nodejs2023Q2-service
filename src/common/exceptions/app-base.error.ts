@@ -1,4 +1,4 @@
-export class BaseErrorException extends Error {
+export class AppBaseError extends Error {
   public readonly name: string;
 
   public readonly isOperational: boolean;
@@ -16,7 +16,7 @@ export class BaseErrorException extends Error {
   }
 
   public static isTrustedError(error: unknown): boolean {
-    if (error instanceof BaseErrorException) {
+    if (error instanceof AppBaseError) {
       return error.isOperational;
     }
 

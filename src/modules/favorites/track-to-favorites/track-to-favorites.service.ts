@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import {
-  NotFoundErrorException,
-  UnprocessableErrorException,
+  AppNotFoundError,
+  AppUnprocessableError,
 } from '../../../common/exceptions';
 import { Track } from '../../tracks/entities/track.entity';
 import { TrackToFavorite } from './entities/track-to-favorite.entity';
@@ -24,7 +24,7 @@ export class TrackToFavoritesService {
     });
 
     if (foundTrack === null) {
-      throw new UnprocessableErrorException();
+      throw new AppUnprocessableError();
     }
 
     await this.track2FavoriteRepository.save({ trackId });
@@ -38,7 +38,7 @@ export class TrackToFavoritesService {
     });
 
     if (foundTrack === null) {
-      throw new NotFoundErrorException();
+      throw new AppNotFoundError();
     }
 
     return await this.track2FavoriteRepository.delete({ trackId });

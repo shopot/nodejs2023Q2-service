@@ -9,6 +9,8 @@ import {
   HttpCode,
   UseFilters,
   UseInterceptors,
+  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 import {
@@ -26,11 +28,7 @@ import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { UuidDto } from '../../common/dto';
-import {
-  HttpNotFoundException,
-  HttpServerErrorException,
-  NotFoundErrorException,
-} from '../../common/exceptions';
+import { AppNotFoundError } from '../../common/exceptions';
 import { HttpExceptionFilter } from '../../common/filters';
 import { TransformInterceptor } from '../../common/interceptors';
 import { Artist } from './entities/artist.entity';
@@ -88,11 +86,11 @@ export class ArtistsController {
     try {
       return await this.artistService.findOne(id);
     } catch (err) {
-      if (err instanceof NotFoundErrorException) {
-        throw new HttpNotFoundException();
+      if (err instanceof AppNotFoundError) {
+        throw new NotFoundException();
       }
 
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 
@@ -124,11 +122,11 @@ export class ArtistsController {
     try {
       return await this.artistService.update(id, updateArtistDto);
     } catch (err) {
-      if (err instanceof NotFoundErrorException) {
-        throw new HttpNotFoundException();
+      if (err instanceof AppNotFoundError) {
+        throw new NotFoundException();
       }
 
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 
@@ -153,11 +151,11 @@ export class ArtistsController {
     try {
       return await this.artistService.remove(id);
     } catch (err) {
-      if (err instanceof NotFoundErrorException) {
-        throw new HttpNotFoundException();
+      if (err instanceof AppNotFoundError) {
+        throw new NotFoundException();
       }
 
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 }

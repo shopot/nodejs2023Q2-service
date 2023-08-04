@@ -9,6 +9,8 @@ import {
   Put,
   UseFilters,
   UseInterceptors,
+  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 import {
@@ -28,11 +30,7 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 import { UuidDto } from '../../common/dto';
 import { HttpExceptionFilter } from '../../common/filters';
 import { TransformInterceptor } from '../../common/interceptors';
-import {
-  HttpNotFoundException,
-  HttpServerErrorException,
-  NotFoundErrorException,
-} from '../../common/exceptions';
+import { AppNotFoundError } from '../../common/exceptions';
 import { Track } from './entities/track.entity';
 
 @Controller('track')
@@ -88,11 +86,11 @@ export class TracksController {
     try {
       return await this.trackService.findOne(id);
     } catch (err) {
-      if (err instanceof NotFoundErrorException) {
-        throw new HttpNotFoundException();
+      if (err instanceof AppNotFoundError) {
+        throw new NotFoundException();
       }
 
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 
@@ -124,11 +122,11 @@ export class TracksController {
     try {
       return await this.trackService.update(id, updateTrackDto);
     } catch (err) {
-      if (err instanceof NotFoundErrorException) {
-        throw new HttpNotFoundException();
+      if (err instanceof AppNotFoundError) {
+        throw new NotFoundException();
       }
 
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 
@@ -153,11 +151,11 @@ export class TracksController {
     try {
       return await this.trackService.remove(id);
     } catch (err) {
-      if (err instanceof NotFoundErrorException) {
-        throw new HttpNotFoundException();
+      if (err instanceof AppNotFoundError) {
+        throw new NotFoundException();
       }
 
-      throw new HttpServerErrorException();
+      throw new InternalServerErrorException();
     }
   }
 }

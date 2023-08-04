@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import {
-  NotFoundErrorException,
-  UnprocessableErrorException,
+  AppNotFoundError,
+  AppUnprocessableError,
 } from '../../../common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -24,7 +24,7 @@ export class AlbumToFavoritesService {
     });
 
     if (foundAlbum === null) {
-      throw new UnprocessableErrorException();
+      throw new AppUnprocessableError();
     }
 
     await this.album2fRepository.save({ albumId });
@@ -38,7 +38,7 @@ export class AlbumToFavoritesService {
     });
 
     if (foundAlbum === null) {
-      throw new NotFoundErrorException();
+      throw new AppNotFoundError();
     }
 
     return await this.album2fRepository.delete({ albumId });

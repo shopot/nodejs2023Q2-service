@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
-import { NotFoundErrorException } from '../../common/exceptions';
+import { AppNotFoundError } from '../../common/exceptions';
 
 @Injectable()
 export class TracksService {
@@ -26,7 +26,7 @@ export class TracksService {
     const foundTrack = await this.trackRepository.findOne({ where: { id } });
 
     if (foundTrack === null) {
-      throw new NotFoundErrorException();
+      throw new AppNotFoundError();
     }
 
     return foundTrack;
@@ -36,7 +36,7 @@ export class TracksService {
     const foundTrack = await this.findOne(id);
 
     if (foundTrack === null) {
-      throw new NotFoundErrorException();
+      throw new AppNotFoundError();
     }
 
     const updatedTrack = {

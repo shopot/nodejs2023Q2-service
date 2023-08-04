@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  NotFoundErrorException,
-  UnprocessableErrorException,
+  AppNotFoundError,
+  AppUnprocessableError,
 } from '../../../common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -28,7 +28,7 @@ export class ArtistToFavoritesService {
     const foundArtist = await this.findOne(artistId);
 
     if (foundArtist === null) {
-      throw new UnprocessableErrorException();
+      throw new AppUnprocessableError();
     }
 
     await this.artist2fRepository.save({ artistId });
@@ -40,7 +40,7 @@ export class ArtistToFavoritesService {
     const foundArtist = await this.findOne(artistId);
 
     if (foundArtist === null) {
-      throw new NotFoundErrorException();
+      throw new AppNotFoundError();
     }
 
     return await this.artist2fRepository.delete({ artistId });

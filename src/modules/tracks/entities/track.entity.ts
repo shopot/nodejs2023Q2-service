@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Artist } from '../../artists/entities/artist.entity';
+import { Album } from '../../albums/entities/album.entity';
 
 @Entity({ name: 'track' })
 export class Track {
@@ -22,4 +30,12 @@ export class Track {
   @ApiProperty()
   @Column({ default: 0 })
   duration: number;
+
+  @ManyToOne(() => Artist)
+  @JoinColumn()
+  artist: Artist;
+
+  @ManyToOne(() => Album)
+  @JoinColumn()
+  album: Album;
 }

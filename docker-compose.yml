@@ -1,6 +1,7 @@
 services:
   db:
-    container_name: "nodejs2023Q2-service-db"
+    image: shopot-hl-service-db.dev
+    container_name: "shopot-hl-service-db"
     build:
       context: .
       dockerfile: docker/bin/postgres/Dockerfile
@@ -28,7 +29,8 @@ services:
         ipv4_address: 10.5.0.2
 
   app:
-    container_name: "nodejs2023Q2-service-app"
+    image: shopot-hl-service-app.dev
+    container_name: "shopot-hl-service-app"
     build:
       context: .
       dockerfile: docker/bin/api/Dockerfile

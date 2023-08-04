@@ -76,7 +76,7 @@ After the first run of the application, the Docker images will be created you ca
 npm run scan:security
 ```
 
-## Build Docker image with application
+## Build production image with application
 
 Run Docker command for build image with application (don't forget end dotted) 
 ```shell

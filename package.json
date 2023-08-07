@@ -23,7 +23,7 @@
     "migration:create": "typeorm migration:create ./src/database/migrations/MIGRATION_NAME",
     "migration:run": "npm run typeorm -- --dataSource=src/config/typeorm-cli.config.ts migration:run",
     "migration:revert": "npm run typeorm -- --dataSource=src/config/typeorm-cli.config.ts migration:revert",
-    "scan:security": "docker scout quickview shopot-hl-service-app.dev:latest && docker scout cves shopot-hl-service-app.dev:latest && docker scout recommendations shopot-hl-service-app.dev:latest",
+    "scan:security": "docker scout quickview shopot-hls-app.dev:latest && docker scout cves shopot-hls-app.dev:latest && docker scout recommendations shopot-hls-app.dev:latest",
     "docs": "nest start --entryFile bin/create-docs"
   },
   "jest": {

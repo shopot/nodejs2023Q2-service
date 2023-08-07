@@ -44,7 +44,11 @@ docker-compose up -d
 Check Docker containers is started
 
 ```shell
+# List running containers
 docker ps
+
+# Check start application
+docker logs shopot-hls-app
 ```
 
 Run migrations inside container to create database entities

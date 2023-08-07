@@ -47,16 +47,10 @@ Check Docker containers is started
 docker ps
 ```
 
-Run migrations to create database entities
+Run migrations inside container to create database entities
 
 ```shell
-npm run migration:run
-```
-
-After creating database entities open new terminal and enter:
-
-```
-npm run test
+docker exec -it shopot-hls-app npm run migration:run
 ```
 
 After starting the app on port (4000 as default) you can open
@@ -68,6 +62,20 @@ or http://localhost:4000/docs-yaml (only developer mode)
 **You will check OpenAPI spec in doc folder corresponds with assignment**
 
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+## Running the tests
+
+After creating database entities open new terminal and enter:
+
+```shell
+npm run test
+```
+Or running tests inside a Docker container
+
+```shell
+docker exec -it shopot-hls-app npm run test
+```
+
 
 ## Scan Application image for security vulnerabilities
 After the first run of the application, the Docker images will be created you can run scan security vulnerabilities

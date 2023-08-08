@@ -39,11 +39,8 @@ services:
     volumes:
       - ./src:/usr/src/app/src
       - /usr/src/app/node_modules
-    environment:
-      PG_HOST: db
     env_file:
       - .env
-
     # Run a command against the development stage of the image
     command: npm run start:dev
     ports:

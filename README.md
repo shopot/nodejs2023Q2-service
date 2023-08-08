@@ -19,13 +19,7 @@ cd ./nodejs2023Q2-service
 ```
 
 ```shell
-git checkout feature/pg-docker
-```
-
-Installing NPM modules
-
-```shell
-npm install
+git checkout develop
 ```
 
 Create .env file (based on .env.example)

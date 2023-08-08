@@ -29,7 +29,7 @@ npm install
 ```
 
 Create .env file (based on .env.example)
-and you can change port number in .env file 
+and you can change port number in .env file
 
 ```shell
 cp .env.example .env
@@ -49,6 +49,9 @@ docker ps
 
 # Check start application
 docker logs shopot-hls-app
+
+# Check containers network
+docker network inspect shopot-hls-network
 ```
 
 Run migrations inside container to create database entities
@@ -60,7 +63,7 @@ docker exec -it shopot-hls-app npm run migration:run
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/docs/ (only developer mode).
 
-You can download OpenAPI Specification in JSON or YAML format  by typing http://localhost:4000/docs-json
+You can download OpenAPI Specification in JSON or YAML format by typing http://localhost:4000/docs-json
 or http://localhost:4000/docs-yaml (only developer mode)
 
 **You will check OpenAPI spec in doc folder corresponds with assignment**
@@ -74,14 +77,15 @@ After creating database entities open new terminal and enter:
 ```shell
 npm run test
 ```
+
 Or running tests inside a Docker container
 
 ```shell
 docker exec -it shopot-hls-app npm run test
 ```
 
-
 ## Scan Application image for security vulnerabilities
+
 After the first run of the application, the Docker images will be created you can run scan security vulnerabilities
 
 ```shell
@@ -90,24 +94,26 @@ npm run scan:security
 
 ## Build production Docker image with application
 
-Run Docker command for build image with application (don't forget end dotted) 
+Run Docker command for build image with application (don't forget end dotted)
+
 ```shell
 docker build --no-cache -t example-name:prod  -f docker/bin/api/Dockerfile .
 ```
 
-Check final size of the Docker image with application 
+Check final size of the Docker image with application
 
 ```shell
 docker image ls
 ```
 
-
 ## Docker Containerization detail
+
 Application Dockerfile `docker/bin/postgres/Dockerfile`
 
-PostgreSQL Dockerfile  `docker/bin/api/Dockerfile`
+PostgreSQL Dockerfile `docker/bin/api/Dockerfile`
 
 Default Docker network is `10.5.0.0/16`
+
 - PostgreSQL Docker container IP's `10.5.0.2`
 - Application Docker container IP's `10.5.0.3`
 
@@ -116,4 +122,3 @@ PostgreSQL data files location in `docker/data/pg_data`
 PostgreSQL log files location in `docker/data/pg_logs`
 
 PostgreSQL config files location in `docker/configs`
-

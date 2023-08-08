@@ -60,15 +60,15 @@ Run migrations inside container to create database entities
 docker exec -it shopot-hls-app npm run migration:run
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/docs/ (only developer mode).
+## Check postgres volume
 
-You can download OpenAPI Specification in JSON or YAML format by typing http://localhost:4000/docs-json
-or http://localhost:4000/docs-yaml (only developer mode)
+```shell
+# Check exists Docker volume by name "shopot-hls-postgres-volume" 
+docker volume ls
 
-**You will check OpenAPI spec in doc folder corresponds with assignment**
-
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+# Inspect volume
+docker volume inspect shopot-hls-postgres-volume
+```
 
 ## Running the tests
 
@@ -122,3 +122,15 @@ PostgreSQL data files location in `docker/data/pg_data`
 PostgreSQL log files location in `docker/data/pg_logs`
 
 PostgreSQL config files location in `docker/configs`
+
+## Notes
+
+After starting the app on port (4000 as default) you can open
+in your browser OpenAPI documentation by typing http://localhost:4000/docs/ (only developer mode).
+
+You can download OpenAPI Specification in JSON or YAML format by typing http://localhost:4000/docs-json
+or http://localhost:4000/docs-yaml (only developer mode)
+
+**You will check OpenAPI spec in doc folder corresponds with assignment**
+
+For more information about OpenAPI/Swagger please visit https://swagger.io/.

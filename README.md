@@ -57,7 +57,7 @@ docker exec -it shopot-hls-app npm run migration:run
 ## Check postgres volume
 
 ```shell
-# Check exists Docker volume by name "shopot-hls-postgres-volume" 
+# Check exists Docker volume by name "shopot-hls-postgres-volume"
 docker volume ls
 
 # Inspect volume
@@ -117,7 +117,7 @@ PostgreSQL log files location in `docker/data/pg_logs`
 
 PostgreSQL config files location in `docker/configs`
 
-## Notes
+#### OpenAPI
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/docs/ (only developer mode).
@@ -128,3 +128,34 @@ or http://localhost:4000/docs-yaml (only developer mode)
 **You will check OpenAPI spec in doc folder corresponds with assignment**
 
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+
+## Uninstall application
+
+```shell
+# Stop containers
+docker compose down
+
+# Remove Docker app image
+docker image rm shopot-hls-app.dev
+
+# Remove Docker database image
+docker image rm shopot-hls-db.dev
+
+# Remove Docker volume
+docker volume rm shopot-hls-postgres-volume
+```
+## How to remove unused data (remove all unused containers, networks, images, volumes)
+
+[Docker system prune](https://docs.docker.com/engine/reference/commandline/system_prune/)
+
+**WARNING! This will remove:**
+  - all stopped containers
+  - all networks not used by at least one container
+  - all volumes not used by at least one container
+  - all images without at least one container associated to them
+  - all build cache
+
+```shell
+docker system prune -a --volumes
+```

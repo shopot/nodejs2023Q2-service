@@ -22,6 +22,12 @@ cd ./nodejs2023Q2-service
 git checkout develop
 ```
 
+Installing NPM modules
+
+```shell
+npm install
+```
+
 Create .env file (based on .env.example)
 and you can change port number in .env file
 
@@ -41,11 +47,17 @@ Check Docker containers is started
 # List running containers
 docker ps
 
-# Check start application
+# Check start the application container
 docker logs shopot-hls-app
 
 # Check containers network
 docker network inspect shopot-hls-network
+
+# Check exists Docker volume by name "shopot-hls-postgres-volume"
+docker volume ls
+
+# Inspect Docker postgres volume
+docker volume inspect shopot-hls-postgres-volume
 ```
 
 Run migrations inside container to create database entities
@@ -54,29 +66,20 @@ Run migrations inside container to create database entities
 docker exec -it shopot-hls-app npm run migration:run
 ```
 
-## Check postgres volume
-
-```shell
-# Check exists Docker volume by name "shopot-hls-postgres-volume"
-docker volume ls
-
-# Inspect volume
-docker volume inspect shopot-hls-postgres-volume
-```
-
 ## Running the tests
 
-After creating database entities open new terminal and enter:
+Running the tests inside a Docker container
+
+```shell
+docker exec -it shopot-hls-app npm run test
+```
+
+Running the tests locally (npm packages should be installed)
 
 ```shell
 npm run test
 ```
 
-Or running tests inside a Docker container
-
-```shell
-docker exec -it shopot-hls-app npm run test
-```
 
 ## Scan Application image for security vulnerabilities
 
@@ -111,9 +114,9 @@ Default Docker network is `10.5.0.0/16`
 - PostgreSQL Docker container IP's `10.5.0.2`
 - Application Docker container IP's `10.5.0.3`
 
-PostgreSQL data files location in `docker/data/pg_data`
+PostgreSQL data files location in `shopot-hls-postgres-volume` volume
 
-PostgreSQL log files location in `docker/data/pg_logs`
+PostgreSQL log files location in `shopot-hls-postgres-volume` volume
 
 PostgreSQL config files location in `docker/configs`
 

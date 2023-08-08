@@ -1,5 +1,7 @@
 # Home Library Service
 
+RS School NodeJS 2023 Q2
+
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).

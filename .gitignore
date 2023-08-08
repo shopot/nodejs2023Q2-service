@@ -38,7 +38,7 @@ lerna-debug.log*
 .env
 
 # app
-/docker/data/*
+/docker/data/pg*
 /http-client
 /docker-build.sh
 /src/bin/create-docs.ts

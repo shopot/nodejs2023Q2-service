@@ -38,7 +38,7 @@ cp .env.example .env
 Start Docker containers
 
 ```shell
-docker-compose up -d
+docker compose up -d
 ```
 
 Check Docker containers is started

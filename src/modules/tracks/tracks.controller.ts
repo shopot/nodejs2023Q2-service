@@ -7,7 +7,6 @@ import {
   Delete,
   HttpCode,
   Put,
-  UseFilters,
   UseInterceptors,
   NotFoundException,
   InternalServerErrorException,

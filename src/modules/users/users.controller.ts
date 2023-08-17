@@ -7,12 +7,10 @@ import {
   Delete,
   Put,
   HttpCode,
-  UseFilters,
   UseInterceptors,
   ForbiddenException,
   NotFoundException,
   InternalServerErrorException,
-  UseGuards,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 import {

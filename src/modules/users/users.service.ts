@@ -1,25 +1,28 @@
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { AppAuthError, AppNotFoundError } from '../../common/exceptions';
-import { AuthenticationService } from '../authentication/authentication.service';
+import { AppForbiddenError, AppNotFoundError } from '../../common/exceptions';
+import { AuthService } from '../auth/auth.service';
 import { UserTransformer } from './transformers/user.transformer';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
-    private readonly authenticationService: AuthenticationService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+
+    @Inject(forwardRef(() => AuthService))
+    private readonly authService: AuthService,
   ) {}
 
   async create({ login, password }: CreateUserDto) {
     const createdUser = await this.userRepository.save({
       login,
-      password: await this.authenticationService.hashPassword(password),
+      password: await this.authService.hashPassword(password),
     });
 
     return new UserTransformer(createdUser);
@@ -41,6 +44,10 @@ export class UsersService {
     return new UserTransformer(foundUser);
   }
 
+  async findByLogin(login: string) {
+    return await this.userRepository.findOne({ where: { login } });
+  }
+
   async update(id: string, { oldPassword, newPassword }: UpdateUserDto) {
     const foundUser = await this.userRepository.findOne({ where: { id } });
 
@@ -50,17 +57,17 @@ export class UsersService {
 
     const { password: hashedPassword } = foundUser;
 
-    const isPasswordMatching = await this.authenticationService.verifyPassword(
+    const isPasswordMatching = await this.authService.verifyPassword(
       oldPassword,
       hashedPassword,
     );
 
     if (!isPasswordMatching) {
-      throw new AppAuthError();
+      throw new AppForbiddenError();
     }
 
     const updateResult = await this.userRepository.update(id, {
-      password: await this.authenticationService.hashPassword(newPassword),
+      password: await this.authService.hashPassword(newPassword),
       updatedAt: new Date(),
       version: +foundUser.version + 1,
     });

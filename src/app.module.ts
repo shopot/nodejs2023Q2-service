@@ -1,17 +1,32 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 
 import configuration from './config/configuration';
 
 import { UsersModule } from './modules/users/users.module';
-import { AuthenticationModule } from './modules/authentication/authentication.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { ArtistsModule } from './modules/artists/artists.module';
 import { AlbumsModule } from './modules/albums/albums.module';
 import { TracksModule } from './modules/tracks/tracks.module';
 import { FavoritesModule } from './modules/favorites/favorites.module';
+import { AppLoggerModule } from './common/shared/app-logger/app-logger.module';
+import { AuthGuard } from './common/guards';
+import { AppLoggerMiddleware } from './common/middlewares';
+import { LoggingInterceptor } from './common/interceptors';
 
 @Module({
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
@@ -22,7 +37,7 @@ import { FavoritesModule } from './modules/favorites/favorites.module';
     TracksModule,
     AlbumsModule,
     FavoritesModule,
-    AuthenticationModule,
+    AuthModule,
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
@@ -39,6 +54,11 @@ import { FavoritesModule } from './modules/favorites/favorites.module';
         };
       },
     }),
+    AppLoggerModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AppLoggerMiddleware).forRoutes('*');
+  }
+}

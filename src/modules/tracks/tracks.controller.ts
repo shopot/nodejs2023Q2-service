@@ -28,14 +28,12 @@ import { TracksService } from './tracks.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { UuidDto } from '../../common/dto';
-import { HttpExceptionFilter } from '../../common/filters';
 import { TransformInterceptor } from '../../common/interceptors';
 import { AppNotFoundError } from '../../common/exceptions';
 import { Track } from './entities/track.entity';
 
 @Controller('track')
 @ApiTags('track')
-@UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
 export class TracksController {
   constructor(private readonly trackService: TracksService) {}

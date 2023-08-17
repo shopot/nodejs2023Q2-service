@@ -3,36 +3,48 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-@Catch(HttpException)
+type ResponseData = {
+  statusCode: HttpStatus;
+  error: string | string[] | unknown;
+  timestamp: string;
+  path: string;
+};
+
+@Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
 
     const response = ctx.getResponse<Response>();
 
     const request = ctx.getRequest<Request>();
 
-    const status = exception.getStatus();
-
-    const exceptionResponse = exception.getResponse();
-
-    let message: string | string[] | unknown = exception.message;
-
-    if (
-      typeof exceptionResponse === 'object' &&
-      'message' in exceptionResponse
-    ) {
-      message = exceptionResponse['message'] || exception.message;
-    }
-
-    response.status(status).json({
-      statusCode: status,
-      error: message,
+    const data: ResponseData = {
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      error: 'Unknown error',
       timestamp: new Date().toISOString(),
       path: request.url,
-    });
+    };
+
+    if (exception instanceof HttpException) {
+      data.statusCode = exception.getStatus();
+
+      const exceptionResponse = exception.getResponse();
+
+      if (
+        typeof exceptionResponse === 'object' &&
+        'message' in exceptionResponse
+      ) {
+        data.error = exceptionResponse['message'] || exception.message;
+      } else {
+        data.error = exception.message;
+      }
+    }
+
+    response.status(data.statusCode).json(data);
   }
 }

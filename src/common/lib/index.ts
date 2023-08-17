@@ -1,1 +1,1 @@
-export { createSwaggerDocs } from './create-swagger-docs';
+export * from './util';

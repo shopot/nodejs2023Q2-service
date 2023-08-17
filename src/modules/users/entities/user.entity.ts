@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
 
 @Entity({ name: 'user' })
 export class User {
@@ -8,7 +8,8 @@ export class User {
   id: string;
 
   @ApiProperty()
-  @Column({ nullable: false })
+  @Index({ unique: true })
+  @Column({ nullable: false, unique: true })
   login: string;
 
   @ApiProperty()

@@ -19,7 +19,7 @@ services:
       start_period: 10s
     restart: unless-stopped
     volumes:
-      - shopot_postgres:/var/lib/postgresql/data
+      - postgres_volume:/var/lib/postgresql/data
       - ./docker/configs/postgresql.conf:/etc/postgresql/postgresql.conf
       - ./docker/configs/pg_hba.conf:/etc/postgresql/pg_hba.conf
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
@@ -37,8 +37,8 @@ services:
       target: development
     restart: 'always'
     volumes:
-      - ./src:/usr/src/app/src
-      - /usr/src/app/node_modules
+      - app_volume:/app
+      - ./src:/app/src
     env_file:
       - .env
     # Run a command against the development stage of the image
@@ -46,7 +46,8 @@ services:
     ports:
       - ${PORT}:${PORT}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       backend:
         ipv4_address: 10.5.0.3
@@ -61,5 +62,7 @@ networks:
         - subnet: 10.5.0.0/16
 
 volumes:
-  shopot_postgres:
+  postgres_volume:
     name: shopot-hls-postgres-volume
+  app_volume:
+    name: shopot-hls-app-volume

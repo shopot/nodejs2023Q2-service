@@ -7,7 +7,6 @@ import {
   Delete,
   HttpCode,
   Put,
-  UseFilters,
   UseInterceptors,
   NotFoundException,
   InternalServerErrorException,
@@ -27,14 +26,12 @@ import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { UuidDto } from '../../common/dto';
-import { HttpExceptionFilter } from '../../common/filters';
 import { TransformInterceptor } from '../../common/interceptors';
 import { AppNotFoundError } from '../../common/exceptions';
 import { Album } from './entities/album.entity';
 
 @Controller('album')
 @ApiTags('album')
-@UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
 export class AlbumsController {
   constructor(private readonly albumService: AlbumsService) {}

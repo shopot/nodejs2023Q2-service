@@ -3,7 +3,6 @@ import {
   Post,
   Param,
   Delete,
-  UseFilters,
   UseInterceptors,
   HttpCode,
   NotFoundException,
@@ -21,7 +20,6 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 
-import { HttpExceptionFilter } from '../../../common/filters';
 import { TransformInterceptor } from '../../../common/interceptors';
 import {
   AppNotFoundError,
@@ -33,7 +31,6 @@ import { TrackToFavoritesService } from './track-to-favorites.service';
 
 @Controller('favs/track')
 @ApiTags('favs/track')
-@UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
 export class TrackToFavoritesController {
   constructor(private readonly track2fService: TrackToFavoritesService) {}

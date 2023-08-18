@@ -2,6 +2,8 @@
 
 RS School NodeJS 2023 Q2
 
+Task: Logging & Error Handling and Authentication and Authorization
+
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
@@ -21,7 +23,7 @@ cd ./nodejs2023Q2-service
 ```
 
 ```shell
-git checkout develop
+git checkout feature/logging-auth
 ```
 
 Installing NPM modules
@@ -51,15 +53,6 @@ docker ps
 
 # Check start the application container
 docker logs shopot-hls-app
-
-# Check containers network
-docker network inspect shopot-hls-network
-
-# Check exists Docker volume by name "shopot-hls-postgres-volume"
-docker volume ls
-
-# Inspect Docker postgres volume
-docker volume inspect shopot-hls-postgres-volume
 ```
 
 Run migrations inside container to create database entities
@@ -68,20 +61,33 @@ Run migrations inside container to create database entities
 docker exec -it shopot-hls-app npm run migration:run
 ```
 
-## Running the tests
+## Fetch the logs of app container
+Open a new terminal and start fetch the logs of app container
+```shell
+docker logs -f shopot-hls-app
+```
 
+## Running the tests with authentication and authorization
 Running the tests inside a Docker container
 
 ```shell
-docker exec -it shopot-hls-app npm run test
+docker exec -it shopot-hls-app npm run test:auth
 ```
 
 Running the tests locally (npm packages should be installed)
 
 ```shell
-npm run test
+npm run test:auth
 ```
 
+## Check writing logs
+```shell
+# List files
+docker exec -it shopot-hls-app ls -ls logs
+
+# Example view log file
+docker exec -it shopot-hls-app cat <log_filename>
+```
 
 ## Scan Application image for security vulnerabilities
 
@@ -147,8 +153,9 @@ docker image rm shopot-hls-app.dev
 # Remove Docker database image
 docker image rm shopot-hls-db.dev
 
-# Remove Docker volume
+# Remove Docker volumes
 docker volume rm shopot-hls-postgres-volume
+docker volume rm shopot-hls-app-volume
 ```
 ## How to remove unused data (remove all unused containers, networks, images, volumes)
 

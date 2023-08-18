@@ -1,9 +1,21 @@
 import {
   DEFAULT_APP_PORT,
-  DEFAULT_LOG_LEVEL,
   DEFAULT_MAX_FILE_SIZE,
   DEFAULT_MAX_FILES,
+  LOG_LEVELS_ARRAY,
 } from '../common/constants';
+
+let logLevelIndex = parseInt(process.env.LOG_LEVEL, 10);
+
+if (
+  !Number.isInteger(logLevelIndex) ||
+  logLevelIndex < 0 ||
+  logLevelIndex > 4
+) {
+  logLevelIndex = 2;
+}
+
+const configLogLevels = LOG_LEVELS_ARRAY.slice(0, logLevelIndex + 1);
 
 export default () => ({
   port: parseInt(process.env.PORT, 10) || DEFAULT_APP_PORT,
@@ -14,12 +26,10 @@ export default () => ({
       : DEFAULT_MAX_FILES,
 
     maxFileSize: process.env.LOG_MAX_FILE_SIZE
-      ? parseInt(process.env.LOG_MAX_FILE_SIZE, 10) * 1024 // in Kb
-      : DEFAULT_MAX_FILE_SIZE * 1024,
+      ? parseInt(process.env.LOG_MAX_FILE_SIZE, 10) * 1000 // in Kb
+      : DEFAULT_MAX_FILE_SIZE * 1000,
 
-    levels: process.env.LOG_LEVELS
-      ? String(process.env.LOG_LEVELS).trim().split(' ')
-      : DEFAULT_LOG_LEVEL,
+    levels: configLogLevels,
   },
 
   auth: {

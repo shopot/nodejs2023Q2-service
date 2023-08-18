@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -35,7 +36,7 @@ export class AuthRefreshGuard implements CanActivate {
 
       request.body['login'] = login;
     } catch {
-      throw new UnauthorizedException();
+      throw new ForbiddenException();
     }
 
     return true;

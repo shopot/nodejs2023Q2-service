@@ -6,7 +6,7 @@ import {
   LogLevel,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DEFAULT_LOG_LEVEL, DEFAULT_MAX_FILE_SIZE } from '../../constants';
+
 import { FileLogger } from './lib/file-logger';
 
 @Injectable()
@@ -16,17 +16,11 @@ export class AppLoggerService implements LoggerService {
   constructor(
     @Inject(ConfigService) private readonly configService: ConfigService,
   ) {
-    console.log(`Create logger instance`);
-
     this.adapters = [];
 
-    const logLevels: LogLevel[] =
-      this.configService.get('logger.levels') || DEFAULT_LOG_LEVEL;
+    const logLevels: LogLevel[] = this.configService.get('logger.levels');
 
-    const maxFileSize: number =
-      this.configService.get('logger.maxFileSize') || DEFAULT_MAX_FILE_SIZE;
-
-    console.log(logLevels);
+    const maxFileSize: number = this.configService.get('logger.maxFileSize');
 
     const consoleLogger = new ConsoleLogger();
 
@@ -37,6 +31,13 @@ export class AppLoggerService implements LoggerService {
     fileLogger.setLogLevels(logLevels);
 
     this.adapters.push(consoleLogger, fileLogger);
+
+    this.log(
+      `Logging collector process is started with levels: "${logLevels.join(
+        ' ',
+      )}"`,
+      AppLoggerService.name,
+    );
   }
 
   /**

@@ -4,7 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 
 import { AppModule } from './app.module';
-import { createSwaggerDocs } from './common/lib';
+import { createSwaggerDocs, isObject } from './common/lib';
 import { AppLoggerService } from './common/shared/app-logger/app-logger.service';
 import { HttpExceptionFilter } from './common/filters';
 
@@ -18,7 +18,25 @@ const bootstrap = async () => {
     bufferLogs: true,
   });
 
-  app.useLogger(app.get(AppLoggerService));
+  const logger = app.get(AppLoggerService);
+
+  process.on('unhandledRejection', (reason, promise) => {
+    logger.error(
+      `Unhandled Rejection at: ${
+        isObject(promise) ? JSON.stringify(promise) : promise
+      } reason: ${isObject(reason) ? JSON.stringify(reason) : reason}`,
+    );
+  });
+
+  process.on('uncaughtException', (err, origin) => {
+    logger.error(
+      `Caught exception: ${
+        isObject(err) ? JSON.stringify(err) : err
+      } - Exception origin: ${origin}`,
+    );
+  });
+
+  app.useLogger(logger);
 
   app.useGlobalFilters(new HttpExceptionFilter());
 

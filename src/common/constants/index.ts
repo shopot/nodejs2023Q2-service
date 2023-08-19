@@ -10,9 +10,9 @@ export const DEFAULT_MAX_FILES = 5;
 
 // 'log' | 'error' | 'warn' | 'debug' | 'verbose'
 export const LOG_LEVELS_ARRAY: LogLevel[] = [
-  'log',
   'error',
   'warn',
+  'log',
   'debug',
   'verbose',
 ];

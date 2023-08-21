@@ -56,6 +56,7 @@ export class AuthController {
 
   @Public()
   @UseGuards(AuthRefreshGuard)
+  @HttpCode(StatusCodes.OK)
   @Post('refresh')
   async refresh(@Body() { id, login }: AuthPayloadDto) {
     try {

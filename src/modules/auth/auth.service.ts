@@ -28,9 +28,13 @@ export class AuthService {
   }
 
   async signIn(username: string, pass: string): Promise<any> {
-    const { id, login, password } = await this.usersService.findByLogin(
-      username,
-    );
+    const foundUser = await this.usersService.findByLogin(username);
+
+    if (!foundUser) {
+      throw new AppForbiddenError();
+    }
+
+    const { id, login, password } = foundUser;
 
     const isPasswordMatching = await this.verifyPassword(pass, password);
 

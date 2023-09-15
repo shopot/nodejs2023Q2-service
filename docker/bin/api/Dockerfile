@@ -4,10 +4,13 @@
 
 FROM node:18-alpine As development
 
-# Create app directory
-RUN mkdir -p /usr/src/app && chown -R node:node /usr/src/app
+# Use the node user from the image (instead of the root user)
+USER node
 
-WORKDIR /usr/src/app
+# Create app directory
+#RUN mkdir -p /app && chown -R node:node /app
+
+WORKDIR /app
 
 # Copy application dependency manifests to the container image.
 # A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
@@ -23,18 +26,18 @@ COPY --chown=node:node ["nest-cli.json", "tsconfig*.json", "./"]
 # Bundle app tests
 COPY --chown=node:node ["test", "./test"]
 
-# Use the node user from the image (instead of the root user)
-USER node
-
 ###################
 # BUILD FOR PRODUCTION
 ###################
 
 FROM node:18-alpine As build
 
-RUN mkdir -p /usr/src/app && chown -R node:node /usr/src/app
+# Use the node user from the image (instead of the root user)
+USER node
 
-WORKDIR /usr/src/app
+#RUN mkdir -p /app && chown -R node:node /app
+
+WORKDIR /app
 
 COPY --chown=node:node package*.json ./
 
@@ -42,7 +45,7 @@ COPY --chown=node:node package*.json ./
 # The Nest CLI is a dev dependency,
 # In the previous development stage we ran `npm ci` which installed all dependencies.
 # So we can copy over the node_modules directory from the development image into this build image.
-COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node --from=development /app/node_modules ./node_modules
 
 COPY --chown=node:node ["nest-cli.json", "tsconfig*.json", "src/", "./"]
 
@@ -57,8 +60,6 @@ ENV NODE_ENV production
 # This ensures that the node_modules directory is as optimized as possible.
 RUN npm ci --omit=dev && npm cache clean --force
 
-USER node
-
 ###################
 # PRODUCTION
 ###################
@@ -66,8 +67,8 @@ USER node
 FROM node:18-alpine As production
 
 # Copy the bundled code from the build stage to the production image
-COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
-COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+COPY --chown=node:node --from=build /app/node_modules ./node_modules
+COPY --chown=node:node --from=build /app/dist ./dist
 
 # Start the server using the production build
 CMD [ "node", "dist/main.js" ]

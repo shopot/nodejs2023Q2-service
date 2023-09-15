@@ -3,6 +3,7 @@ import {
   QueryRunner,
   Table,
   TableForeignKey,
+  TableIndex,
 } from 'typeorm';
 
 export class InitialSchema1690950864750 implements MigrationInterface {
@@ -25,6 +26,7 @@ export class InitialSchema1690950864750 implements MigrationInterface {
             name: 'login',
             type: 'varchar',
             isNullable: false,
+            isUnique: true,
           },
           {
             name: 'password',
@@ -177,6 +179,14 @@ export class InitialSchema1690950864750 implements MigrationInterface {
         onDelete: 'SET NULL',
       }),
     );
+
+    await queryRunner.createIndex(
+      'user',
+      new TableIndex({
+        name: 'IDX_USER_LOGIN',
+        columnNames: ['login'],
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -201,6 +211,8 @@ export class InitialSchema1690950864750 implements MigrationInterface {
     await queryRunner.dropForeignKey('track', foreignKeyTrackToAlbum);
 
     await queryRunner.dropForeignKey('track', foreignKeyTrackToArtist);
+
+    await queryRunner.dropIndex('user', 'IDX_USER_LOGIN');
 
     await queryRunner.dropTable('user');
 

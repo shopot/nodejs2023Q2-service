@@ -7,7 +7,6 @@ import {
   Delete,
   Put,
   HttpCode,
-  UseFilters,
   UseInterceptors,
   ForbiddenException,
   NotFoundException,
@@ -30,16 +29,14 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UuidDto } from '../../common/dto';
 import { User } from './entities/user.entity';
-import { AppAuthError, AppNotFoundError } from '../../common/exceptions';
-import { HttpExceptionFilter } from '../../common/filters';
+import { AppForbiddenError, AppNotFoundError } from '../../common/exceptions';
 import { TransformInterceptor } from '../../common/interceptors';
 
 @Controller('user')
 @ApiTags('user')
-@UseFilters(new HttpExceptionFilter())
-@UseInterceptors(new TransformInterceptor())
+@UseInterceptors(TransformInterceptor)
 export class UsersController {
-  constructor(private readonly userService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @ApiBody({
@@ -55,7 +52,7 @@ export class UsersController {
   })
   async create(@Body() createUserDto: CreateUserDto) {
     try {
-      return await this.userService.create(createUserDto);
+      return await this.usersService.create(createUserDto);
     } catch {
       throw new InternalServerErrorException();
     }
@@ -67,7 +64,7 @@ export class UsersController {
     type: [User],
   })
   async findAll() {
-    return await this.userService.findAll();
+    return await this.usersService.findAll();
   }
 
   @Get(':id')
@@ -89,7 +86,7 @@ export class UsersController {
   })
   async findOne(@Param() { id }: UuidDto) {
     try {
-      return await this.userService.findOne(id);
+      return await this.usersService.findOne(id);
     } catch (err) {
       if (err instanceof AppNotFoundError) {
         throw new NotFoundException();
@@ -117,11 +114,11 @@ export class UsersController {
   @ApiNotFoundResponse({ description: 'A user with given id does not exist.' })
   async update(@Param() { id }: UuidDto, @Body() updateUserDto: UpdateUserDto) {
     try {
-      return await this.userService.update(id, updateUserDto);
+      return await this.usersService.update(id, updateUserDto);
     } catch (err) {
       if (err instanceof AppNotFoundError) {
         throw new NotFoundException();
-      } else if (err instanceof AppAuthError) {
+      } else if (err instanceof AppForbiddenError) {
         throw new ForbiddenException();
       }
 
@@ -144,7 +141,7 @@ export class UsersController {
   @HttpCode(StatusCodes.NO_CONTENT)
   async remove(@Param() { id }: UuidDto) {
     try {
-      return await this.userService.remove(id);
+      return await this.usersService.remove(id);
     } catch (err) {
       if (err instanceof AppNotFoundError) {
         throw new NotFoundException();

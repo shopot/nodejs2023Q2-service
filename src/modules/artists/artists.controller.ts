@@ -7,7 +7,6 @@ import {
   Delete,
   Put,
   HttpCode,
-  UseFilters,
   UseInterceptors,
   NotFoundException,
   InternalServerErrorException,
@@ -29,13 +28,11 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { UuidDto } from '../../common/dto';
 import { AppNotFoundError } from '../../common/exceptions';
-import { HttpExceptionFilter } from '../../common/filters';
 import { TransformInterceptor } from '../../common/interceptors';
 import { Artist } from './entities/artist.entity';
 
 @Controller('artist')
 @ApiTags('artist')
-@UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
 export class ArtistsController {
   constructor(private readonly artistService: ArtistsService) {}

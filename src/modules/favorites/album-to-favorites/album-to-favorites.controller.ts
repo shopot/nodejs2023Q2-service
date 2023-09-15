@@ -3,7 +3,6 @@ import {
   Post,
   Param,
   Delete,
-  UseFilters,
   UseInterceptors,
   HttpCode,
   NotFoundException,
@@ -21,7 +20,6 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 
-import { HttpExceptionFilter } from '../../../common/filters';
 import { TransformInterceptor } from '../../../common/interceptors';
 import {
   AppNotFoundError,
@@ -33,7 +31,6 @@ import { DeleteAlbumToFavoriteDto } from './dto/delete-album-to-favorite.dto';
 
 @Controller('favs/album')
 @ApiTags('favs/album')
-@UseFilters(new HttpExceptionFilter())
 @UseInterceptors(new TransformInterceptor())
 export class AlbumToFavoritesController {
   constructor(private readonly album2fService: AlbumToFavoritesService) {}

@@ -1,0 +1,65 @@
+services:
+  db:
+    image: shopot-hls-db.dev
+    container_name: 'shopot-hls-db'
+    build:
+      context: .
+      dockerfile: docker/bin/postgres/Dockerfile
+    environment:
+      POSTGRES_USERNAME: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+    ports:
+      - ${PG_PUBLIC_PORT}:5432
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${PG_USER} -d ${PG_DB}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    volumes:
+      - shopot_postgres:/var/lib/postgresql/data
+      - ./docker/configs/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./docker/configs/pg_hba.conf:/etc/postgresql/pg_hba.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    networks:
+      backend:
+        ipv4_address: 10.5.0.2
+
+  app:
+    image: shopot-hls-app.dev
+    container_name: 'shopot-hls-app'
+    build:
+      context: .
+      dockerfile: docker/bin/api/Dockerfile
+      # Only will build development stage from our dockerfile
+      target: development
+    restart: 'always'
+    volumes:
+      - ./src:/usr/src/app/src
+      - /usr/src/app/node_modules
+    env_file:
+      - .env
+    # Run a command against the development stage of the image
+    command: npm run start:dev
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - db
+    networks:
+      backend:
+        ipv4_address: 10.5.0.3
+
+networks:
+  backend:
+    name: shopot-hls-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.5.0.0/16
+
+volumes:
+  shopot_postgres:
+    name: shopot-hls-postgres-volume

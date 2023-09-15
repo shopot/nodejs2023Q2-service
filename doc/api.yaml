@@ -419,46 +419,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FavoritesDto"
-      tags: &a5
+      tags:
         - favs
-  "/favs/track/{id}":
-    post:
-      operationId: FavoritesController_createTrack
-      parameters:
-        - name: id
-          required: true
-          in: path
-          description: Should be an id of a track that exists in the database
-          schema:
-            type: string
-      responses:
-        "201":
-          description: A track has been successfully added
-        "400":
-          description: A track with given id is invalid (not uuid).
-        "422":
-          description: A track with given id does not exist
-      tags: *a5
-    delete:
-      operationId: FavoritesController_removeTrack
-      parameters:
-        - name: id
-          required: true
-          in: path
-          description: Should be an id of a track that exists in the database
-          schema:
-            type: string
-      responses:
-        "204":
-          description: A track has been successfully deleted
-        "400":
-          description: A track with given id is invalid (not uuid).
-        "404":
-          description: A track with given id does not exist.
-      tags: *a5
   "/favs/album/{id}":
     post:
-      operationId: FavoritesController_createAlbum
+      operationId: AlbumToFavoritesController_createAlbum
       parameters:
         - name: id
           required: true
@@ -473,9 +438,10 @@ paths:
           description: A album with given id is invalid (not uuid).
         "422":
           description: A album with given id does not exist
-      tags: *a5
+      tags: &a5
+        - favs/album
     delete:
-      operationId: FavoritesController_removeAlbum
+      operationId: AlbumToFavoritesController_removeAlbum
       parameters:
         - name: id
           required: true
@@ -491,9 +457,45 @@ paths:
         "404":
           description: A album with given id does not exist.
       tags: *a5
+  "/favs/track/{id}":
+    post:
+      operationId: TrackToFavoritesController_createTrack
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Should be an id of a track that exists in the database
+          schema:
+            type: string
+      responses:
+        "201":
+          description: A track has been successfully added
+        "400":
+          description: A track with given id is invalid (not uuid).
+        "422":
+          description: A track with given id does not exist
+      tags: &a6
+        - favs/track
+    delete:
+      operationId: TrackToFavoritesController_removeTrack
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Should be an id of a track that exists in the database
+          schema:
+            type: string
+      responses:
+        "204":
+          description: A track has been successfully deleted
+        "400":
+          description: A track with given id is invalid (not uuid).
+        "404":
+          description: A track with given id does not exist.
+      tags: *a6
   "/favs/artist/{id}":
     post:
-      operationId: FavoritesController_createArtist
+      operationId: ArtistToFavoritesController_createArtist
       parameters:
         - name: id
           required: true
@@ -508,9 +510,10 @@ paths:
           description: A artist with given id is invalid (not uuid).
         "422":
           description: A artist with given id does not exist
-      tags: *a5
+      tags: &a7
+        - favs/artist
     delete:
-      operationId: FavoritesController_removeArtist
+      operationId: ArtistToFavoritesController_removeArtist
       parameters:
         - name: id
           required: true
@@ -525,7 +528,7 @@ paths:
           description: A artist with given id is invalid (not uuid).
         "404":
           description: A artist with given id does not exist.
-      tags: *a5
+      tags: *a7
 info:
   title: Home Library Service
   description: Home music library service OpenAPI 3.0
@@ -569,9 +572,9 @@ components:
         version:
           type: number
         createdAt:
-          type: number
+          type: object
         updatedAt:
-          type: number
+          type: object
       required:
         - id
         - login

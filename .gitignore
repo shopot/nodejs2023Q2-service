@@ -36,3 +36,10 @@ lerna-debug.log*
 
 # Node
 .env
+
+# app
+/docker/data/pg*
+/http-client
+/docker-build.sh
+/src/bin/create-docs.ts
+/doc/api-old.yaml

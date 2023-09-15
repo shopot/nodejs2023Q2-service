@@ -1,8 +1,3 @@
-export { HttpNotFoundException } from './http/http-not-found.exeption';
-export { HttpForbiddenException } from './http/http-forbidden.exeption';
-export { HttpServerErrorException } from './http/http-server-error.exeption';
-export { HttpUnprocessableException } from './http/http-unprocessable.exeption';
-
-export { NotFoundErrorException } from './not-found-error.exception';
-export { AuthErrorException } from './auth-error.exception';
-export { UnprocessableErrorException } from './unprocessable-error.exception';
+export { AppNotFoundError } from './app-not-found.error';
+export { AppAuthError } from './app-auth.error';
+export { AppUnprocessableError } from './app-unprocessable.error';
